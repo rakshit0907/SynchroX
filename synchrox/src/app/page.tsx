@@ -245,15 +245,45 @@ export default function DashboardPage() {
 
       {/* Query Submission + Demo Mode */}
       <div className="glass-card" style={{ padding: '24px', marginBottom: '32px' }}>
+        {/* Query Templates */}
+        <div style={{ marginBottom: '14px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '10px' }}>
+            ⚡ Quick Templates
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {[
+              { label: '📋 GDPR Compliance', text: 'What are the key GDPR compliance requirements for a healthcare SaaS startup handling patient data?' },
+              { label: '📈 Market Analysis', text: 'Analyze the competitive landscape for enterprise AI orchestration tools in 2024 and identify growth opportunities.' },
+              { label: '🏗️ System Design', text: 'Design a scalable microservices architecture for a real-time payment processing system handling 10k TPS.' },
+              { label: '⚖️ Legal Review', text: 'What are the legal risks in a SaaS contract that includes automatic renewal and data processing clauses?' },
+              { label: '🔒 Security Audit', text: 'Identify the top security vulnerabilities in a REST API that handles financial transactions without rate limiting.' },
+              { label: '🌐 Geopolitical', text: 'Analyze the geopolitical implications of AI regulation divergence between the EU AI Act and US executive orders.' },
+            ].map(t => (
+              <button key={t.label} onClick={() => setQuery(t.text)} style={{
+                padding: '6px 14px', borderRadius: '100px', fontSize: '12px', fontWeight: 600, cursor: 'pointer',
+                background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-glass)',
+                color: 'var(--text-secondary)', fontFamily: 'Inter, sans-serif',
+                transition: 'all 0.2s ease', whiteSpace: 'nowrap',
+              }}
+              onMouseEnter={e => { (e.target as HTMLElement).style.background = 'rgba(59,130,246,0.12)'; (e.target as HTMLElement).style.borderColor = 'rgba(59,130,246,0.3)'; (e.target as HTMLElement).style.color = 'var(--accent-blue)'; }}
+              onMouseLeave={e => { (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.04)'; (e.target as HTMLElement).style.borderColor = 'var(--border-glass)'; (e.target as HTMLElement).style.color = 'var(--text-secondary)'; }}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
           <div style={{ flex: 1 }}>
             <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', display: 'block' }}>
               Submit a Query to the AI Engine
             </label>
-            <input className="input-field" placeholder="Enter your query for AI processing..."
+            <input className="input-field" placeholder="Enter your query or click a template above... (Press Enter to submit)"
               value={query} onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && submitQuery()} />
           </div>
+
           <button className="btn btn-primary" onClick={() => submitQuery()} disabled={submitting || !query.trim()} style={{ height: '46px', minWidth: '130px' }}>
             {submitting ? <div className="spinner" /> : '🚀 Process'}
           </button>
