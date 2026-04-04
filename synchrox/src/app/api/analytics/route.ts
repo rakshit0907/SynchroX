@@ -21,13 +21,13 @@ export async function GET() {
     const edited   = queries?.filter(q => q.status === 'human_edited').length || 0;
     const rejected = queries?.filter(q => q.status === 'rejected').length || 0;
     const total    = queries?.length || 1;
-    const avgConf  = queries?.reduce((s, q) => s + (q.confidence_score || 0), 0) / total || 0;
+    const avgConf  = (queries?.reduce((s, q) => s + (q.confidence_score || 0), 0) ?? 0) / total;
 
     const { data: ts } = await supabase.from('trust_shield').select('verdict, confidence_score');
     const aiGen        = ts?.filter(t => t.verdict === 'ai_generated').length || 0;
     const authentic    = ts?.filter(t => t.verdict === 'authentic').length || 0;
     const inconclusive = ts?.filter(t => t.verdict === 'inconclusive').length || 0;
-    const avgTsConf    = ts?.reduce((s, t) => s + (t.confidence_score || 0), 0) / (ts?.length || 1) || 0;
+    const avgTsConf    = (ts?.reduce((s, t) => s + (t.confidence_score || 0), 0) ?? 0) / (ts?.length || 1);
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const weeklyTrend = days.map(day => ({

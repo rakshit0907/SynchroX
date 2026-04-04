@@ -60,7 +60,7 @@ export async function analyzeMedia(
       {
         method: 'POST',
         headers: { Authorization: `Bearer ${HF_API_KEY}`, 'Content-Type': fileType },
-        body: uint8,
+        body: uint8 as BodyInit,
       }
     );
 
