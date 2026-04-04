@@ -2,29 +2,46 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from './AuthProvider';
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: '📊' },
-  { href: '/workflows', label: 'Workflow Builder', icon: '⚡' },
-  { href: '/trust-shield', label: 'Trust Shield', icon: '🛡️' },
+  { href: '/workflows', label: 'Workflow Builder', icon: '⚙️' },
   { href: '/review', label: 'HITL Review', icon: '👤' },
+  { href: '/trust-shield', label: 'Trust Shield', icon: '🛡️' },
+  { href: '/logs', label: 'System Logs', icon: '📋' },
   { href: '/analytics', label: 'Analytics', icon: '📈' },
-  { href: '/logs', label: 'Logs', icon: '📋' },
 ];
+
+// Role-based nav visibility
+const ROLE_NAV: Record<string, string[]> = {
+  admin:    ['/', '/workflows', '/review', '/trust-shield', '/logs', '/analytics'],
+  reviewer: ['/', '/review', '/trust-shield', '/logs', '/analytics'],
+  viewer:   ['/', '/logs', '/analytics'],
+};
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [showPanel, setShowPanel] = useState(false);
-  const [notifications, setNotifications] = useState<Array<{ id: string; title: string; message: string; severity: string; read: boolean; created_at: string }>>([]);
+  const { user, profile, signOut } = useAuth();
+  const [notifications, setNotifications] = useState(0);
+  const [showNotif, setShowNotif] = useState(false);
+  const [notifList, setNotifList] = useState<Array<{ id: string; title: string; message: string; severity: string; created_at: string }>>([]);
+
+  const role = profile?.role || 'viewer';
+  const allowedNav = ROLE_NAV[role] || ROLE_NAV.viewer;
+  const visibleNav = navItems.filter(n => allowedNav.includes(n.href));
+
+  const initials = profile?.full_name
+    ? profile.full_name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+    : (user?.email?.[0] || '?').toUpperCase();
 
   const fetchNotifications = useCallback(async () => {
     try {
       const res = await fetch('/api/notifications');
       const data = await res.json();
-      setNotifications(data.notifications || []);
-      setUnreadCount(data.unreadCount || 0);
-    } catch { }
+      setNotifications(data.unreadCount || 0);
+      setNotifList((data.notifications || []).slice(0, 5));
+    } catch { /* ignore */ }
   }, []);
 
   useEffect(() => {
@@ -33,95 +50,118 @@ export default function Sidebar() {
     return () => clearInterval(t);
   }, [fetchNotifications]);
 
-  const markAllRead = async () => {
+  const markRead = async () => {
     await fetch('/api/notifications', { method: 'PATCH' });
-    setNotifications(p => p.map(n => ({ ...n, read: true })));
-    setUnreadCount(0);
+    setNotifications(0);
   };
 
-  return (
-    <>
-      <aside className="sidebar">
-        <div className="sidebar-logo">
-          <div className="sidebar-logo-icon">⚙️</div>
-          <span className="sidebar-logo-text gradient-text">SynchroX</span>
-        </div>
+  const roleBadgeColor = role === 'admin' ? 'var(--accent-green)' : role === 'reviewer' ? 'var(--accent-amber)' : 'var(--accent-blue)';
+  const roleIcon = role === 'admin' ? '⚡' : role === 'reviewer' ? '👤' : '👁️';
 
-        <nav className="sidebar-nav">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`sidebar-link ${pathname === item.href ? 'active' : ''}`}
-            >
+  return (
+    <aside className="sidebar">
+      {/* Logo */}
+      <div className="sidebar-logo">
+        <div className="sidebar-logo-icon">⚡</div>
+        <span className="sidebar-logo-text gradient-text">SynchroX</span>
+      </div>
+
+      {/* Navigation */}
+      <nav className="sidebar-nav">
+        {visibleNav.map((item) => {
+          const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+          return (
+            <Link key={item.href} href={item.href} className={`sidebar-link ${isActive ? 'active' : ''}`}>
               <span className="sidebar-link-icon">{item.icon}</span>
               {item.label}
+              {item.href === '/review' && notifications > 0 && (
+                <span style={{
+                  marginLeft: 'auto', minWidth: '18px', height: '18px', borderRadius: '100px',
+                  background: 'var(--accent-amber)', color: '#000', fontSize: '10px',
+                  fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 5px',
+                }}>{notifications}</span>
+              )}
             </Link>
-          ))}
-        </nav>
+          );
+        })}
+      </nav>
 
-        <div style={{ padding: '12px 16px', borderTop: '1px solid var(--border-glass)' }}>
-          <button
-            onClick={() => setShowPanel(!showPanel)}
-            style={{
-              width: '100%', display: 'flex', alignItems: 'center', gap: '12px',
-              padding: '10px 14px', borderRadius: '10px', border: 'none', cursor: 'pointer',
-              background: showPanel ? 'rgba(59,130,246,0.1)' : 'transparent',
-              color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 500,
-              fontFamily: 'Inter, sans-serif', transition: 'all 0.2s ease',
-            }}
-          >
-            <span>🔔</span>
-            Notifications
-            {unreadCount > 0 && (
-              <span style={{
-                marginLeft: 'auto', background: 'var(--accent-red)', color: 'white',
-                fontSize: '10px', fontWeight: 700, padding: '2px 7px', borderRadius: '100px',
-              }}>{unreadCount}</span>
-            )}
-          </button>
-        </div>
+      {/* Notification Bell */}
+      <div style={{ margin: '8px 0', position: 'relative' }}>
+        <button onClick={() => { setShowNotif(!showNotif); if (!showNotif) markRead(); }} style={{
+          width: '100%', display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 16px',
+          borderRadius: '12px', background: 'transparent', border: 'none', cursor: 'pointer',
+          color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 500, fontFamily: 'Inter, sans-serif',
+          transition: 'background 0.2s ease',
+        }}>
+          <span style={{ fontSize: '18px' }}>🔔</span>
+          Notifications
+          {notifications > 0 && (
+            <span style={{
+              marginLeft: 'auto', minWidth: '18px', height: '18px', borderRadius: '100px',
+              background: 'var(--accent-red)', color: 'white', fontSize: '10px',
+              fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 5px',
+            }}>{notifications}</span>
+          )}
+        </button>
 
-        <div style={{ padding: '12px 16px', borderTop: '1px solid var(--border-glass)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-green)', boxShadow: '0 0 8px rgba(16,185,129,0.5)' }} />
-            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Engine Active</span>
-          </div>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '8px' }}>SynchroX v1.1 • Supabase</div>
-        </div>
-      </aside>
-
-      {showPanel && (
-        <>
-          <div onClick={() => setShowPanel(false)} style={{ position: 'fixed', inset: 0, zIndex: 55, background: 'rgba(0,0,0,0.3)' }} />
+        {showNotif && (
           <div style={{
-            position: 'fixed', left: '260px', top: 0, bottom: 0, width: '360px',
-            background: 'rgba(10,14,26,0.97)', backdropFilter: 'blur(20px)',
-            borderRight: '1px solid var(--border-glass)', zIndex: 60, display: 'flex', flexDirection: 'column',
+            position: 'fixed', left: '268px', bottom: '120px', width: '300px', zIndex: 100,
+            background: 'var(--bg-secondary)', border: '1px solid var(--border-glass)',
+            borderRadius: '14px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden',
           }}>
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-glass)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: 700 }}>🔔 Notifications</h3>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                {unreadCount > 0 && <button className="btn btn-sm btn-secondary" onClick={markAllRead}>Mark all read</button>}
-                <button className="btn btn-sm btn-secondary" onClick={() => setShowPanel(false)}>✕</button>
-              </div>
+            <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border-glass)', fontSize: '13px', fontWeight: 700 }}>
+              Notifications
             </div>
-            <div style={{ flex: 1, overflowY: 'auto' }}>
-              {notifications.length === 0 ? (
-                <div className="empty-state">
-                  <div className="empty-state-icon">🔔</div>
-                  <div className="empty-state-text">No notifications</div>
-                </div>
-              ) : notifications.map((n) => (
-                <div key={n.id} style={{ padding: '14px 24px', borderBottom: '1px solid rgba(255,255,255,0.03)', background: n.read ? 'transparent' : 'rgba(59,130,246,0.04)' }}>
-                  <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '4px' }}>{n.title}</div>
-                  <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{n.message}</p>
-                </div>
-              ))}
+            {notifList.length === 0 ? (
+              <div style={{ padding: '24px', textAlign: 'center', fontSize: '13px', color: 'var(--text-muted)' }}>
+                No new notifications
+              </div>
+            ) : notifList.map(n => (
+              <div key={n.id} style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.03)', fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
+                <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px' }}>{n.title}</div>
+                {n.message}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* User Profile */}
+      <div style={{ borderTop: '1px solid var(--border-glass)', paddingTop: '16px', marginTop: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '12px', background: 'rgba(255,255,255,0.02)' }}>
+          {/* Avatar */}
+          <div style={{
+            width: '36px', height: '36px', borderRadius: '10px', background: 'var(--gradient-primary)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '13px', fontWeight: 800, color: 'white', flexShrink: 0,
+          }}>{initials}</div>
+
+          {/* Name + Role */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {profile?.full_name || user?.email?.split('@')[0] || 'User'}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+              <span style={{ fontSize: '10px' }}>{roleIcon}</span>
+              <span style={{ fontSize: '11px', color: roleBadgeColor, fontWeight: 600, textTransform: 'capitalize' }}>{role}</span>
             </div>
           </div>
-        </>
-      )}
-    </>
+
+          {/* Logout */}
+          <button
+            onClick={signOut}
+            title="Sign out"
+            style={{
+              width: '30px', height: '30px', borderRadius: '8px', border: '1px solid var(--border-glass)',
+              background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px',
+              transition: 'all 0.2s ease', flexShrink: 0,
+            }}
+          >↩</button>
+        </div>
+      </div>
+    </aside>
   );
 }

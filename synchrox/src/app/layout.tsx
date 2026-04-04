@@ -1,19 +1,17 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Sidebar from '@/components/Sidebar';
+import LayoutShell from '@/components/LayoutShell';
 
 export const metadata: Metadata = {
   title: 'SynchroX — AI Orchestrator',
-  description: 'Intelligent workflow orchestration with human-in-the-loop review.',
+  description: 'Intelligent workflow orchestration with human-in-the-loop control',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <div className="bg-orbs" />
-        <Sidebar />
-        <main className="main-content">{children}</main>
+        <LayoutShell>{children}</LayoutShell>
       </body>
     </html>
   );
