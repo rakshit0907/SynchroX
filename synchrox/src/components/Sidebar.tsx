@@ -5,21 +5,23 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthProvider';
 
 const navItems = [
-  { href: '/',          label: 'Dashboard',       icon: '📊' },
-  { href: '/workflows', label: 'Workflow Builder', icon: '⚙️' },
-  { href: '/review',    label: 'HITL Review',      icon: '👤' },
-  { href: '/history',   label: 'Query History',    icon: '🗂️' },
-  { href: '/trust-shield', label: 'Trust Shield',  icon: '🛡️' },
-  { href: '/logs',      label: 'System Logs',      icon: '📋' },
-  { href: '/analytics', label: 'Analytics',        icon: '📈' },
+  { href: '/',           label: 'Dashboard',        icon: '📊' },
+  { href: '/workflows',  label: 'Workflow Builder',  icon: '⚙️' },
+  { href: '/review',     label: 'HITL Review',       icon: '👤' },
+  { href: '/history',    label: 'Query History',     icon: '🗂️' },
+  { href: '/performance',label: 'Performance',       icon: '🏆' },
+  { href: '/trust-shield', label: 'Trust Shield',   icon: '🛡️' },
+  { href: '/logs',       label: 'System Logs',       icon: '📋' },
+  { href: '/analytics',  label: 'Analytics',         icon: '📈' },
 ];
 
 // Role-based nav visibility
 const ROLE_NAV: Record<string, string[]> = {
-  admin:    ['/', '/workflows', '/review', '/history', '/trust-shield', '/logs', '/analytics'],
-  reviewer: ['/', '/review', '/history', '/trust-shield', '/logs', '/analytics'],
+  admin:    ['/', '/workflows', '/review', '/history', '/performance', '/trust-shield', '/logs', '/analytics'],
+  reviewer: ['/', '/review', '/history', '/performance', '/trust-shield', '/logs', '/analytics'],
   viewer:   ['/', '/history', '/logs', '/analytics'],
 };
+
 
 export default function Sidebar() {
   const pathname = usePathname();
