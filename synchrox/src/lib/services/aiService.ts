@@ -52,6 +52,89 @@ This event was a major turning point in the war and directly led to Arjuna's vow
     response: `The current President of the United States is **Donald Trump**, the 47th President, who took office on January 20, 2025, after winning the 2024 presidential election.`,
   },
   {
+    patterns: [/steal.*idea|stole.*idea|plagiar|steal.*credit|credit.*steal|newton.*leibniz|leibniz.*newton|edison.*tesla|tesla.*edison|scientist.*steal|steal.*scientist|first.*steal|who.*steal/i],
+    confidence: 0.72,
+    response: `**Scientific Plagiarism & Credit Disputes Throughout History**
+
+The history of science is filled with famous disputes over credit and intellectual theft:
+
+**Most Notable Cases:**
+
+1. **Newton vs. Leibniz (17th century)** — Perhaps the most famous scientific dispute. Both Isaac Newton and Gottfried Wilhelm Leibniz independently developed calculus, but accused each other of stealing the idea. Today historians believe both developed it independently, though Newton developed it first (1666) but published later (1687), while Leibniz published in 1684.
+
+2. **Rosalind Franklin & Watson/Crick (1953)** — Rosalind Franklin's X-ray diffraction images of DNA (specifically "Photo 51") were shown to Watson and Crick without her knowledge or consent. They used her data to confirm the double-helix structure of DNA. Watson, Crick, and Wilkins received the Nobel Prize in 1962; Franklin had passed away in 1958 and Nobel Prizes are not awarded posthumously.
+
+3. **Edison vs. Tesla** — Thomas Edison reportedly stole or took credit for many inventions developed by Nikola Tesla, who worked for Edison's company. Tesla developed AC current while Edison promoted DC, and Edison allegedly promised Tesla $50,000 for improvements then refused to pay.
+
+4. **Gregor Mendel's ignored work** — Mendel's foundational genetics work (1866) was "rediscovered" in 1900 by three scientists (de Vries, Correns, Tschermak) simultaneously — raising questions about who had access to Mendel's original papers.
+
+**If asking about the very first known case:** Ancient Greek philosophers like Aristotle were accused by contemporaries of borrowing ideas without attribution. The concept of intellectual property barely existed in ancient times.`,
+  },
+  {
+    patterns: [/history.*science|science.*history|famous.*inventor|greatest.*scientist|who.*invented|who.*discovered|who.*first/i],
+    confidence: 0.68,
+    response: `**History of Science — Key Milestones & Notable Figures:**
+
+**Ancient Period:**
+- Archimedes (287–212 BC) — Principles of leverage, buoyancy, early calculus concepts
+- Euclid (300 BC) — Foundations of geometry
+- Aristotle (384–322 BC) — Natural philosophy, biology, physics
+
+**Scientific Revolution (16th–17th century):**
+- Copernicus (1543) — Heliocentric model of the solar system
+- Galileo Galilei — Telescope improvements, laws of motion
+- Isaac Newton — Laws of motion, gravity, calculus
+- Johannes Kepler — Laws of planetary motion
+
+**Modern Era:**
+- Charles Darwin (1859) — Theory of evolution by natural selection
+- Albert Einstein (1905/1915) — Special and General Relativity, E=mc²
+- Marie Curie — Radioactivity research, first woman Nobel laureate (twice)
+- James Watson & Francis Crick (1953) — DNA double helix structure
+
+**Recent:**
+- Tim Berners-Lee (1989) — World Wide Web
+- Jennifer Doudna & Emmanuelle Charpentier — CRISPR gene editing (Nobel 2020)`,
+  },
+  {
+    patterns: [/artificial intelligence|machine learning|deep learning|neural network|ai history|who.*created ai|origin.*ai/i],
+    confidence: 0.75,
+    response: `**Artificial Intelligence — History & Key Figures:**
+
+**Founding Era (1940s–1960s):**
+- **Alan Turing (1950)** — Proposed the "Turing Test" for machine intelligence in his paper "Computing Machinery and Intelligence"
+- **John McCarthy (1956)** — Coined the term "Artificial Intelligence" at the Dartmouth Conference
+- **Marvin Minsky** — Co-founder of MIT's AI Lab
+
+**Key Milestones:**
+- 1957 — Frank Rosenblatt creates the Perceptron (first neural network)
+- 1997 — IBM Deep Blue defeats chess champion Garry Kasparov
+- 2012 — AlexNet revolutionizes deep learning and computer vision
+- 2016 — Google DeepMind's AlphaGo defeats world Go champion
+- 2017 — "Attention Is All You Need" paper introduces the Transformer architecture
+- 2022 — ChatGPT (OpenAI) launches, bringing AI to mainstream adoption
+- 2023–2024 — Explosion of multimodal AI models (GPT-4, Gemini, Claude, Llama)`,
+  },
+  {
+    patterns: [/world war|ww1|ww2|world war 1|world war 2|second world war|first world war/i],
+    confidence: 0.78,
+    response: `**World Wars — Key Facts:**
+
+**World War I (1914–1918):**
+- Triggered by assassination of Archduke Franz Ferdinand (June 28, 1914)
+- Allied Powers: France, Britain, Russia, USA (from 1917) vs Central Powers: Germany, Austria-Hungary, Ottoman Empire
+- ~20 million deaths (military + civilian)
+- Ended with Treaty of Versailles (1919)
+
+**World War II (1939–1945):**
+- Started when Germany invaded Poland (September 1, 1939)
+- Allies: USA, UK, Soviet Union, France vs Axis: Germany, Japan, Italy
+- ~70–85 million deaths — deadliest conflict in human history
+- Key events: Holocaust, Battle of Britain, D-Day (June 6, 1944), atomic bombs on Hiroshima & Nagasaki
+- Ended September 2, 1945 with Japan's surrender`,
+  },
+
+  {
     patterns: [/gdpr|compliance|data protection|regulation.*privacy|privacy.*regulation/i],
     confidence: 0.65,
     response: `**GDPR Compliance Framework — Key Requirements:**
