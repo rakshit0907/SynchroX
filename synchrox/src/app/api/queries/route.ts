@@ -5,24 +5,49 @@ import { executeWorkflow } from '@/lib/services/workflowEngine';
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const status = searchParams.get('status');
-    const limit  = parseInt(searchParams.get('limit') || '50');
+    const status     = searchParams.get('status');
+    const search     = searchParams.get('search');
+    const model      = searchParams.get('model');
+    const dateFrom   = searchParams.get('dateFrom');
+    const dateTo     = searchParams.get('dateTo');
+    const confMin    = searchParams.get('confMin');
+    const confMax    = searchParams.get('confMax');
+    const sortBy     = searchParams.get('sortBy') || 'created_at';
+    const sortOrder  = searchParams.get('sortOrder') === 'asc';
+    const page       = parseInt(searchParams.get('page') || '1');
+    const limit      = parseInt(searchParams.get('limit') || '20');
+    const offset     = (page - 1) * limit;
 
-    let q = supabase.from('queries').select('*').order('created_at', { ascending: false }).limit(limit);
-    if (status) q = q.eq('status', status);
+    let q = supabase
+      .from('queries')
+      .select('*', { count: 'exact' })
+      .order(sortBy, { ascending: sortOrder })
+      .range(offset, offset + limit - 1);
 
-    const { data: queries, error } = await q;
+    if (status && status !== 'all') q = q.eq('status', status);
+    if (search)  q = q.ilike('user_query', `%${search}%`);
+    if (model)   q = q.eq('ai_model', model);
+    if (dateFrom) q = q.gte('created_at', dateFrom);
+    if (dateTo)   q = q.lte('created_at', dateTo + 'T23:59:59Z');
+    if (confMin)  q = q.gte('confidence_score', parseFloat(confMin));
+    if (confMax)  q = q.lte('confidence_score', parseFloat(confMax));
 
-    // Table might not exist yet — return empty gracefully
+    const { data: queries, error, count } = await q;
+
     if (error) {
-      console.warn('[queries] Supabase error (table may not exist):', error.message);
-      return NextResponse.json({ queries: [] });
+      console.warn('[queries] Supabase error:', error.message);
+      return NextResponse.json({ queries: [], total: 0, page, totalPages: 0 });
     }
 
-    return NextResponse.json({ queries: queries || [] });
+    return NextResponse.json({
+      queries : queries || [],
+      total   : count  || 0,
+      page,
+      totalPages: Math.ceil((count || 0) / limit),
+    });
   } catch (err) {
     console.error('[queries] Unexpected error:', err);
-    return NextResponse.json({ queries: [] });
+    return NextResponse.json({ queries: [], total: 0, page: 1, totalPages: 0 });
   }
 }
 
