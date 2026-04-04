@@ -20,15 +20,14 @@ export async function GET() {
     ]);
 
     const { data: allScores } = await supabase.from('queries').select('confidence_score, processing_time_ms');
-    const avgConfidence     = allScores?.length ? allScores.reduce((s, q) => s + (q.confidence_score || 0), 0) / allScores.length : 0;
-    const avgProcessingTime = allScores?.length ? allScores.reduce((s, q) => s + (q.processing_time_ms || 0), 0) / allScores.length : 0;
+    const avgConfidence    = allScores?.length ? allScores.reduce((s, q) => s + q.confidence_score, 0) / allScores.length : 0;
+    const avgProcessingTime= allScores?.length ? allScores.reduce((s, q) => s + q.processing_time_ms, 0) / allScores.length : 0;
     const { data: recentQueries } = await supabase.from('queries').select('*').order('created_at', { ascending: false }).limit(10);
-
-    const t        = total || 0;
+    const t = total || 0;
     const hitlRate = t > 0 ? (((pendingReview || 0) + (humanApproved || 0) + (humanEdited || 0)) / t * 100) : 0;
 
     return NextResponse.json({
-      totalQueries    : t,
+      totalQueries    : total || 0,
       autoApproved    : autoApproved || 0,
       pendingReview   : pendingReview || 0,
       humanApproved   : humanApproved || 0,

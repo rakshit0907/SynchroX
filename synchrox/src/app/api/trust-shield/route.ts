@@ -24,8 +24,8 @@ export async function POST(req: NextRequest) {
     const fileSize  = file?.size || parseInt(formData.get('fileSize') as string || '0');
     const mediaType = (fileType.startsWith('video') ? 'video' : 'image') as 'image' | 'video';
 
-    let fileBuffer: Buffer | undefined;
-    if (file) fileBuffer = Buffer.from(await file.arrayBuffer());
+    let fileBuffer: ArrayBuffer | undefined;
+    if (file) fileBuffer = await file.arrayBuffer();
 
     const result = await analyzeMedia(fileName, fileType, fileSize, mediaType, fileBuffer);
 

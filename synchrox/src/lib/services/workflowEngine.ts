@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { generateAIResponse } from './aiService';
+import { sendHITLAlertEmail } from './emailService';
 
 async function createLog(
   queryId: string,
@@ -72,15 +73,27 @@ export async function executeWorkflow(queryText: string, workflowId?: string) {
     updates.status = 'pending_review';
     updates.routing_reason = `Confidence (${aiResult.confidenceScore}) below threshold (${confidenceThreshold})`;
     await createLog(queryId, 'routed_to_human', `Low confidence. Escalated to human reviewer.`);
-    // Create notification
+    // Create in-app notification
     await supabase.from('notifications').insert({
       type    : 'hitl_required',
       title   : 'Human Review Required',
       message : `Query "${queryText.slice(0, 60)}..." needs review (${Math.round(aiResult.confidenceScore * 100)}% confidence)`,
       severity: 'warning',
-      linked_entity_type: 'query',
-      linked_entity_id  : queryId,
     });
+    // Fetch reviewer + admin emails and send alert email
+    const { data: reviewers } = await supabase
+      .from('profiles')
+      .select('email')
+      .in('role', ['reviewer', 'admin']);
+    const emails = (reviewers || []).map((r: { email: string }) => r.email).filter(Boolean);
+    await sendHITLAlertEmail({
+      queryText,
+      confidenceScore: aiResult.confidenceScore,
+      queryId,
+      reason: `Confidence score ${Math.round(aiResult.confidenceScore * 100)}% is below the required threshold of ${Math.round(confidenceThreshold * 100)}%`,
+      reviewerEmails: emails,
+    });
+    await createLog(queryId, 'email_sent', `HITL alert emailed to ${emails.length} reviewer(s)`, { emails });
   }
 
   const { data: updated } = await supabase
