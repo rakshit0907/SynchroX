@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '@/components/AuthProvider';
 
 interface ReviewQuery {
   id: string;
@@ -152,6 +153,8 @@ export default function ReviewPage() {
   const [activePanel, setActivePanel] = useState<'edit' | 'explain' | 'context'>('edit');
   const [slaStats, setSlaStats] = useState<{ total_pending: number; within_sla: number; warning: number; breached: number; critical: number; avg_wait_mins: number } | null>(null);
   const [tick, setTick] = useState(0); // forces re-render every minute for live timers
+  const { profile } = useAuth();
+  const canReview = profile?.role === 'admin' || profile?.role === 'reviewer';
 
   const fetchPending = useCallback(async () => {
     try {
@@ -250,13 +253,21 @@ export default function ReviewPage() {
     background: activePanel === tab ? 'rgba(59,130,246,0.15)' : 'transparent',
     color: activePanel === tab ? 'var(--accent-blue)' : 'var(--text-muted)',
     fontFamily: 'Inter, sans-serif', transition: 'all 0.2s ease',
-  });
-
   return (
     <>
       <div className="page-header">
-        <h1 className="page-title">Human-in-the-Loop Review</h1>
-        <p className="page-subtitle">Review, edit, and approve AI responses — with Explainable AI insights</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <h1 className="page-title">HITL Review</h1>
+            <p className="page-subtitle">Review, edit, and approve AI responses — with Explainable AI insights</p>
+          </div>
+          {!canReview && (
+            <div style={{ padding: '10px 18px', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.25)', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>👁️</span>
+              <span style={{ fontSize: '13px', color: 'var(--accent-amber)', fontWeight: 600 }}>Read-only — Viewers cannot approve, edit, or reject queries</span>
+            </div>
+          )}
+        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '360px 1fr 320px', gap: '20px', height: 'calc(100vh - 160px)' }}>
@@ -363,15 +374,21 @@ export default function ReviewPage() {
                 {activePanel === 'context' && <ContextSummary query={selected} />}
               </div>
 
-              <div style={{ padding: '16px 24px', borderTop: '1px solid var(--border-glass)', display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-                <button className="btn btn-danger" onClick={() => handleAction('reject')} disabled={actionLoading}>❌ Reject</button>
-                <button className="btn btn-secondary" onClick={() => handleAction('edit')} disabled={actionLoading || editedResponse === (selected.ai_response || '')} style={{ opacity: editedResponse === (selected.ai_response || '') ? 0.5 : 1 }}>
-                  📝 Approve with Edits
-                </button>
-                <button className="btn btn-success" onClick={() => handleAction('approve')} disabled={actionLoading}>
-                  {actionLoading ? <div className="spinner" /> : '✅ Approve'}
-                </button>
-              </div>
+              {canReview ? (
+                <div style={{ padding: '16px 24px', borderTop: '1px solid var(--border-glass)', display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                  <button className="btn btn-danger" onClick={() => handleAction('reject')} disabled={actionLoading}>❌ Reject</button>
+                  <button className="btn btn-secondary" onClick={() => handleAction('edit')} disabled={actionLoading || editedResponse === (selected.ai_response || '')} style={{ opacity: editedResponse === (selected.ai_response || '') ? 0.5 : 1 }}>
+                    📝 Approve with Edits
+                  </button>
+                  <button className="btn btn-success" onClick={() => handleAction('approve')} disabled={actionLoading}>
+                    {actionLoading ? <div className="spinner" /> : '✅ Approve'}
+                  </button>
+                </div>
+              ) : (
+                <div style={{ padding: '14px 24px', borderTop: '1px solid var(--border-glass)', background: 'rgba(245,158,11,0.04)' }}>
+                  <span style={{ fontSize: '12px', color: 'var(--accent-amber)' }}>👁️ You have read-only access. Ask an admin to assign you the <strong>reviewer</strong> role to take actions.</span>
+                </div>
+              )}
             </>
           ) : (
             <div className="empty-state" style={{ height: '100%' }}>

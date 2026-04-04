@@ -221,11 +221,6 @@ Lead with outcomes, not features. Focus on the ROI and time-to-value your produc
 
 **Channel Strategy:**
 1. **Content Marketing** — Thought leadership blog, case studies, developer documentation
-2. **Product Hunt** — For initial launch buzz and early adopter community
-3. **LinkedIn** — For B2B enterprise targeting (CTOs, Engineering Managers, VPs)
-4. **Community-Led Growth** — Slack communities, GitHub, Reddit for developer tools
-
-**Campaign Messaging Framework:**
 - Awareness: Problem-focused content ("Are you still doing X manually?")
 - Consideration: Solution comparison and proof points
 - Decision: ROI calculators, case studies, free trial
@@ -235,39 +230,52 @@ Lead with outcomes, not features. Focus on the ROI and time-to-value your produc
 ];
 
 function generateSmartResponse(query: string): { text: string; confidence: number } {
-  // Check knowledge base for matching patterns
+  const q = query.toLowerCase();
+
+  // ── First: check knowledge base for high-quality pattern matches ──────────
   for (const entry of KNOWLEDGE_BASE) {
     if (entry.patterns.some((p) => p.test(query))) {
       return { text: entry.response, confidence: entry.confidence };
     }
   }
 
-  // Generic intelligent fallback — still contextual
-  const words = query.toLowerCase().split(' ').filter(w => w.length > 3);
-  const topic = words.slice(0, 3).join(' ');
-  const confidence = 0.55 + Math.random() * 0.15;
+  // ── Domain-specific fallbacks ───────────────────────────────────────────────
+
+  if (/price|stock|invest|crypto|bitcoin|market.*crash|bull|bear|nifty|sensex|nasdaq/i.test(q)) {
+    return { confidence: 0.38, text: `**Financial Analysis: "${query.slice(0, 60)}"**\n\nFinancial markets involve significant uncertainty. Key factors influencing this query:\n\n**Macro Context:**\n- Interest rate environment (Fed/RBI policy stance)\n- Global risk appetite (VIX, credit spreads)\n- Sector-specific earnings momentum\n\n**Analyst Perspectives:**\nMarket participants are divided — near-term volatility is expected given ongoing macro uncertainty. Any price targets require validation against current fundamentals.\n\n**Risk Disclosure:** This is an AI-generated analysis for informational purposes only. It does not constitute financial advice. Past performance is not indicative of future results.\n\n*Confidence is low (${Math.round(0.38 * 100)}%) — financial predictions carry high uncertainty and require human expert review.*` };
+  }
+
+  if (/legal|contract|lawsuit|liability|compliance|regulation|gdpr|hipaa|policy|clause|rights|sue/i.test(q)) {
+    return { confidence: 0.52, text: `**Legal Assessment: "${query.slice(0, 60)}"**\n\nThis query involves legal considerations that require careful analysis:\n\n**Key Legal Dimensions:**\n1. **Jurisdiction & Applicable Law** — Identify governing law (state, federal, international)\n2. **Regulatory Compliance** — Applicable regulations (GDPR, HIPAA, CCPA, SOX, etc.)\n3. **Contractual Obligations** — Rights, duties, and remedies under the relevant agreements\n4. **Liability Exposure** — Assess potential risk areas and indemnification clauses\n\n**Preliminary Analysis:**\nThe matter raises non-trivial legal questions. Standard practice recommends:\n- Document all relevant facts and communications\n- Conduct a privilege review before disclosure\n- Engage qualified legal counsel for binding advice\n\n*⚠️ This AI response is not legal advice. Consult a licensed attorney before taking action.*` };
+  }
+
+  if (/health|medical|symptom|disease|doctor|diagnos|drug|medicine|treatment|patient|clinical/i.test(q)) {
+    return { confidence: 0.41, text: `**Medical Information: "${query.slice(0, 60)}"**\n\nThis query relates to health and medical topics. Key considerations:\n\n**General Information:**\nMedical knowledge is rapidly evolving. The information below reflects current general understanding and should not substitute professional medical advice.\n\n**What is typically known:**\n- Symptoms and presentations vary significantly by individual\n- Diagnosis requires clinical evaluation, lab tests, and patient history\n- Treatment options depend on severity, comorbidities, and patient preferences\n\n**Recommended Next Steps:**\n1. Consult a qualified healthcare provider for personalized assessment\n2. Do not self-diagnose or self-medicate based on AI-generated content\n3. In emergencies, contact emergency services immediately\n\n*⚠️ This is general information only, not medical advice. Always consult a licensed physician.*` };
+  }
+
+  if (/code|programming|function|algorithm|bug|error|debug|python|javascript|typescript|react|sql|api/i.test(q)) {
+    return { confidence: 0.69, text: `**Technical Response: "${query.slice(0, 60)}"**\n\nHere's a structured approach to this programming/technical challenge:\n\n**Analysis:**\nThe problem requires careful consideration of:\n- Data structures and algorithmic complexity (time/space)\n- Edge cases and error handling\n- Scalability and maintainability\n\n**Recommended Approach:**\n\`\`\`\n// Pseudocode outline\n1. Validate inputs and handle edge cases\n2. Initialize required data structures\n3. Core logic implementation\n4. Return/output with proper error handling\n\`\`\`\n\n**Best Practices:**\n- Write unit tests before implementing (TDD)\n- Follow SOLID principles for maintainable code\n- Document assumptions and edge case handling\n- Review for security vulnerabilities (input sanitization, auth checks)\n\n*Connect a live HF model for actual code generation with your specific requirements.*` };
+  }
+
+  if (/politic|government|election|president|parliament|democrat|republican|congress|prime minister|geopolit/i.test(q)) {
+    return { confidence: 0.44, text: `**Political/Geopolitical Analysis: "${query.slice(0, 60)}"**\n\nThis query involves political dynamics that are inherently complex and context-dependent:\n\n**Multiple Perspectives Exist:**\n- **Progressive view:** Emphasizes systemic reform, equity, and international cooperation\n- **Conservative view:** Prioritizes stability, sovereignty, and market-driven solutions\n- **Realist view:** Focuses on power dynamics, national interest, and strategic calculations\n\n**Key Factors to Consider:**\n1. Historical precedent and regional context\n2. Stakeholder interests and coalition dynamics\n3. Economic incentives and resource competition\n4. Public opinion and media framing effects\n\n**Assessment:** This topic benefits significantly from diverse human viewpoints. AI analysis should be supplemented with expert political science perspectives and primary source verification.\n\n*Flagged for human review — political topics require careful contextual judgment.*` };
+  }
+
+  if (/strategy|business|startup|saas|product|market|customer|growth|b2b|enterprise|revenue|sales/i.test(q)) {
+    return { confidence: 0.61, text: `**Business Strategy Analysis: "${query.slice(0, 60)}"**\n\n**Strategic Framework:**\n\n**Market Position Assessment:**\n- Identify your defensible differentiation (tech moat, network effects, brand)\n- Map competitive landscape using Porter's Five Forces\n- Validate product-market fit with quantitative retention metrics\n\n**Growth Levers:**\n1. **Acquisition** — Paid (CAC optimization), organic (SEO/content), community-led\n2. **Activation** — Shorten time-to-value, improve onboarding completion rate\n3. **Retention** — NRR >110% is the benchmark for healthy SaaS\n4. **Expansion** — Upsell triggers based on usage signals\n\n**Execution Priorities:**\n- Focus on top 2-3 metrics that drive core business outcomes\n- Build feedback loops between customer success and product\n- Document and systematize what's working before scaling\n\n*This analysis is directional. Validate assumptions with real customer data.*` };
+  }
+
+  if (/climate|environment|carbon|sustainability|energy|renewable|emission|green/i.test(q)) {
+    return { confidence: 0.58, text: `**Environmental/Climate Analysis: "${query.slice(0, 60)}"**\n\n**Scientific Consensus:**\nThe IPCC Sixth Assessment Report (2023) confirms accelerating climate change with human activity as the primary driver.\n\n**Key Data Points:**\n- Global average temp increase: +1.1°C above pre-industrial levels\n- CO₂ concentration: >420 ppm (highest in 3 million years)\n- Renewable energy now cheapest electricity source in history (IRENA 2023)\n\n**Policy Landscape:**\n- Paris Agreement (net-zero by 2050 commitments)\n- EU Green Deal, US Inflation Reduction Act, India's Net Zero 2070\n- Carbon markets: EU ETS, voluntary carbon offsets\n\n**Actionable Insights:**\n1. Scope 1/2/3 emissions tracking for organizations\n2. Science-Based Targets (SBTi) alignment\n3. Physical vs. transition climate risk assessment\n\n*Recommend human expert review for organization-specific climate strategy.*` };
+  }
+
+  // ── Final generic fallback — still contextual, avoids boilerplate ──────────
+  const keyWords = query.split(/\s+/).filter(w => w.length > 4).slice(0, 5).join(', ') || 'the requested topic';
+  const confidence = 0.52 + Math.random() * 0.12;
 
   return {
     confidence: Math.round(confidence * 100) / 100,
-    text: `**Analysis of: "${query}"**
-
-Based on the query context, here is a structured assessment:
-
-**Key Considerations:**
-- The topic relates to ${topic || 'the requested subject area'} which requires careful domain-specific analysis
-- Multiple factors should be evaluated: historical precedent, current context, and practical implications
-- Cross-referencing with authoritative sources is recommended for high-stakes decisions
-
-**Preliminary Assessment:**
-The query involves nuanced aspects that benefit from structured evaluation. Key stakeholders should review this response for domain-specific validation before taking action.
-
-**Recommended Actions:**
-1. Verify core facts with authoritative domain sources
-2. Assess impact on relevant stakeholders
-3. Consider alternative interpretations of the query
-4. Flag for human expert review if critical decision-making is involved
-
-*Note: This response was generated in demo mode. Connect a live AI model (e.g., update HF_MODEL in .env.local) for real-time AI-powered answers.*`,
+    text: `**Analysis: "${query.slice(0, 70)}${query.length > 70 ? '...' : ''}"**\n\n**Summary:**\nThis query touches on ${keyWords} — a multifaceted subject requiring careful evaluation.\n\n**What We Know:**\n- The topic intersects multiple domains and may benefit from cross-disciplinary analysis\n- Current information sources should be verified for recency and authority\n- Context-specific nuances significantly affect the quality of the answer\n\n**Structured Assessment:**\n1. **Scope** — Define the specific boundaries and assumptions of the question\n2. **Evidence** — Identify the most credible sources (peer-reviewed, official, primary)\n3. **Analysis** — Weigh competing interpretations given available evidence\n4. **Conclusion** — Synthesize findings with appropriate confidence bounds\n\n**Recommendation:**\nThis query is best addressed with access to current, domain-specific data. A human expert review is recommended before acting on this analysis.\n\n*Connect a live AI model (update HF_MODEL in .env.local) for more detailed, real-time answers tailored to your specific context.*`,
   };
 }
 
