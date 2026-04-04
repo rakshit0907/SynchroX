@@ -37,8 +37,8 @@ export async function POST(req: NextRequest) {
         file_size       : fileSize,
         media_type      : mediaType,
         verdict         : result.verdict,
-        confidence_score: result.confidence_scor,
-        analysis_details: result.analysis_details,
+        confidence_score: result.confidenceScore,
+        analysis_details: result.analysisDetails,
         uploaded_by     : 'current_user',
         status          : 'completed',
       })

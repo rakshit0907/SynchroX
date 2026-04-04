@@ -40,7 +40,7 @@ export async function executeWorkflow(queryText: string, workflowId?: string) {
   await createLog(queryId, 'ai_processing', 'AI agent is analyzing the query...');
   const aiResult = await generateAIResponse(queryText);
 
-  await createLog(queryId, 'ai_response', `AI confidence: ${aiResult.confidence_scor}`, {
+  await createLog(queryId, 'ai_response', `AI confidence: ${aiResult.confidenceScore}`, {
     model: aiResult.model,
     processingTimeMs: aiResult.processingTimeMs,
     tokensUsed: aiResult.tokensUsed,
@@ -48,35 +48,35 @@ export async function executeWorkflow(queryText: string, workflowId?: string) {
 
   // 4. Confidence check
   await createLog(queryId, 'confidence_check',
-    `Confidence ${aiResult.confidence_scor} vs threshold ${confidenceThreshold}`, {
-    confidenceScore: aiResult.confidence_scor,
+    `Confidence ${aiResult.confidenceScore} vs threshold ${confidenceThreshold}`, {
+    confidenceScore: aiResult.confidenceScore,
     threshold: confidenceThreshold,
-    meetsThreshold: aiResult.confidence_scor >= confidenceThreshold,
+    meetsThreshold: aiResult.confidenceScore >= confidenceThreshold,
   });
 
   // 5. Route decision
   const updates: Record<string, unknown> = {
     ai_response: aiResult.text,
-    confidence_score: aiResult.confidence_scor,
+    confidence_score: aiResult.confidenceScore,
     ai_model: aiResult.model,
     processing_time_ms: aiResult.processingTimeMs,
   };
 
-  if (aiResult.confidence_scor >= confidenceThreshold) {
+  if (aiResult.confidenceScore >= confidenceThreshold) {
     updates.status = 'auto_approved';
     updates.final_response = aiResult.text;
-    updates.routing_reason = `Confidence (${aiResult.confidence_scor}) meets threshold (${confidenceThreshold})`;
+    updates.routing_reason = `Confidence (${aiResult.confidenceScore}) meets threshold (${confidenceThreshold})`;
     await createLog(queryId, 'auto_approved', 'Response auto-approved');
     await createLog(queryId, 'response_delivered', 'Final response delivered to user');
   } else {
     updates.status = 'pending_review';
-    updates.routing_reason = `Confidence (${aiResult.confidence_scor}) below threshold (${confidenceThreshold})`;
+    updates.routing_reason = `Confidence (${aiResult.confidenceScore}) below threshold (${confidenceThreshold})`;
     await createLog(queryId, 'routed_to_human', `Low confidence. Escalated to human reviewer.`);
     // Create notification
     await supabase.from('notifications').insert({
       type    : 'hitl_required',
       title   : 'Human Review Required',
-      message : `Query "${queryText.slice(0, 60)}..." needs review (${Math.round(aiResult.confidence_scor * 100)}% confidence)`,
+      message : `Query "${queryText.slice(0, 60)}..." needs review (${Math.round(aiResult.confidenceScore * 100)}% confidence)`,
       severity: 'warning',
       linked_entity_type: 'query',
       linked_entity_id  : queryId,

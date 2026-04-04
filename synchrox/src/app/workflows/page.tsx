@@ -53,7 +53,7 @@ export default function WorkflowsPage() {
   const [workflowName, setWorkflowName] = useState('AI Query Orchestration');
   const [threshold, setThreshold] = useState(0.75);
   const [toast, setToast] = useState<string | null>(null);
-  const [savedWorkflows, setSavedWorkflows] = useState<Array<{ _id: string; name: string; status: string }>>([]);
+  const [savedWorkflows, setSavedWorkflows] = useState<Array<{ id: string; name: string; status: string }>>([]);
   const canvasRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

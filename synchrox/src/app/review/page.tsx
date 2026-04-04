@@ -3,51 +3,21 @@
 import { useState, useEffect, useCallback } from 'react';
 
 interface ReviewQuery {
-  _id: string;
-  userQuery: string;
-  aiResponse: string;
-  confidenceScore: number;
+  id: string;
+  user_query: string;
+  ai_response: string;
+  confidence_score: number;
   status: string;
-  routingReason: string;
-  aiModel: string;
-  processingTimeMs: number;
-  createdAt: string;
+  routing_reason: string;
+  ai_model: string;
+  processing_time_ms: number;
+  created_at: string;
 }
 
 const DEMO_QUERIES: ReviewQuery[] = [
-  {
-    _id: 'demo1',
-    userQuery: 'Draft a compliance report for our upcoming GDPR data protection audit. Include key areas of focus and recommended actions.',
-    aiResponse: 'The regulatory framework requires adherence to data protection standards including GDPR Article 17 (Right to Erasure) and CCPA Section 1798.105. I recommend implementing automated compliance checks.',
-    confidenceScore: 0.62,
-    status: 'pending_review',
-    routingReason: 'Confidence score (0.62) below threshold (0.75)',
-    aiModel: 'synchrox-sim-v1',
-    processingTimeMs: 890,
-    createdAt: new Date(Date.now() - 300000).toISOString(),
-  },
-  {
-    _id: 'demo2',
-    userQuery: 'Create an innovative brand story for our new AI-powered product line targeting enterprise customers.',
-    aiResponse: "Here's a fresh perspective on this challenge: consider reframing the problem as an opportunity for innovation. The unconventional approach could differentiate your solution significantly.",
-    confidenceScore: 0.48,
-    status: 'pending_review',
-    routingReason: 'Confidence score (0.48) below threshold (0.75)',
-    aiModel: 'synchrox-sim-v1',
-    processingTimeMs: 1120,
-    createdAt: new Date(Date.now() - 600000).toISOString(),
-  },
-  {
-    _id: 'demo3',
-    userQuery: 'Design the database schema for our new microservice-based payment processing system with CQRS pattern.',
-    aiResponse: 'After evaluating the technical requirements, I suggest using a CQRS pattern with event sourcing. This provides strong consistency guarantees while maintaining high throughput for read operations.',
-    confidenceScore: 0.54,
-    status: 'pending_review',
-    routingReason: 'Confidence score (0.54) below threshold (0.75)',
-    aiModel: 'synchrox-sim-v1',
-    processingTimeMs: 750,
-    createdAt: new Date(Date.now() - 1200000).toISOString(),
-  },
+  { id: 'demo1', user_query: 'Draft a compliance report for GDPR data protection audit.', ai_response: 'The regulatory framework requires adherence to GDPR Article 17. I recommend implementing automated compliance checks.', confidence_score: 0.62, status: 'pending_review', routing_reason: 'Confidence (0.62) below threshold (0.75)', ai_model: 'demo', processing_time_ms: 890, created_at: new Date(Date.now() - 300000).toISOString() },
+  { id: 'demo2', user_query: 'Create an innovative brand story for our AI-powered product line.', ai_response: "Consider reframing the problem as an opportunity for innovation. The unconventional approach could differentiate your solution.", confidence_score: 0.48, status: 'pending_review', routing_reason: 'Confidence (0.48) below threshold (0.75)', ai_model: 'demo', processing_time_ms: 1120, created_at: new Date(Date.now() - 600000).toISOString() },
+  { id: 'demo3', user_query: 'Design the database schema for a microservice payment system with CQRS.', ai_response: 'I suggest using CQRS with event sourcing. This provides strong consistency while maintaining high throughput for reads.', confidence_score: 0.54, status: 'pending_review', routing_reason: 'Confidence (0.54) below threshold (0.75)', ai_model: 'demo', processing_time_ms: 750, created_at: new Date(Date.now() - 1200000).toISOString() },
 ];
 
 export default function ReviewPage() {
@@ -81,7 +51,7 @@ export default function ReviewPage() {
 
   const selectQuery = (q: ReviewQuery) => {
     setSelected(q);
-    setEditedResponse(q.ai_response);
+    setEditedResponse(q.ai_response || '');
     setNotes('');
   };
 
@@ -192,10 +162,10 @@ export default function ReviewPage() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <div style={{
                         width: '8px', height: '8px', borderRadius: '50%',
-                        background: getConfColor(q.confidence_scor),
+                        background: getConfColor(q.confidence_score),
                       }} />
                       <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                        {Math.round(q.confidence_scor * 100)}%
+                        {Math.round(q.confidence_score * 100)}%
                       </span>
                     </div>
                     <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
@@ -217,10 +187,10 @@ export default function ReviewPage() {
                   <h3 style={{ fontSize: '16px', fontWeight: 700 }}>Review Response</h3>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <span className="badge badge-pending">
-                      Confidence: {Math.round(selected.confidence_scor * 100)}%
+                      Confidence: {Math.round(selected.confidence_score * 100)}%
                     </span>
                     <span style={{ fontSize: '11px', color: 'var(--text-muted)', padding: '4px 8px' }}>
-                      {selected.ai_model} • {selected.processingTimeMs}ms
+                      {selected.ai_model} • {selected.processing_time_ms}ms
                     </span>
                   </div>
                 </div>
@@ -282,13 +252,13 @@ export default function ReviewPage() {
                   </label>
                   <div className="confidence-bar" style={{ height: '10px' }}>
                     <div
-                      className={`confidence-fill ${selected.confidence_scor >= 0.75 ? 'confidence-high' : selected.confidence_scor >= 0.5 ? 'confidence-medium' : 'confidence-low'}`}
-                      style={{ width: `${selected.confidence_scor * 100}%` }}
+                      className={`confidence-fill ${selected.confidence_score >= 0.75 ? 'confidence-high' : selected.confidence_score >= 0.5 ? 'confidence-medium' : 'confidence-low'}`}
+                      style={{ width: `${selected.confidence_score * 100}%` }}
                     />
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>
                     <span>Low</span>
-                    <span>{Math.round(selected.confidence_scor * 100)}%</span>
+                    <span>{Math.round(selected.confidence_score * 100)}%</span>
                     <span>High</span>
                   </div>
                 </div>
@@ -309,8 +279,8 @@ export default function ReviewPage() {
                 <button
                   className="btn btn-secondary"
                   onClick={() => handleAction('edit')}
-                  disabled={actionLoading || editedResponse === selected.ai_response}
-                  style={{ opacity: editedResponse === selected.ai_response ? 0.5 : 1 }}
+                  disabled={actionLoading || editedResponse === (selected.ai_response || '')}
+                  style={{ opacity: editedResponse === (selected.ai_response || '') ? 0.5 : 1 }}
                 >
                   📝 Approve with Edits
                 </button>

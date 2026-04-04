@@ -3,14 +3,14 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface Analysis {
-  _id: string;
-  fileName: string;
-  fileType: string;
-  fileSize: number;
-  mediaType: string;
+  id: string;
+  file_name: string;
+  file_type: string;
+  file_size: number;
+  media_type: string;
   verdict: string;
-  confidenceScore: number;
-  analysisDetails: {
+  confidence_score: number;
+  analysis_details: {
     artifactScore: number;
     consistencyScore: number;
     metadataScore: number;
@@ -18,7 +18,7 @@ interface Analysis {
     summary: string;
   };
   status: string;
-  createdAt: string;
+  created_at: string;
 }
 
 const VERDICT_CONFIG: Record<string, { label: string; color: string; bg: string; icon: string }> = {
@@ -98,7 +98,7 @@ export default function TrustShieldPage() {
       setSelected(analysis);
 
       const v = VERDICT_CONFIG[analysis.verdict];
-      setToast(`${v?.icon} ${v?.label} — ${Math.round(analysis.confidence_scor * 100)}% confidence`);
+      setToast(`${v?.icon} ${v?.label} — ${Math.round(analysis.confidence_score * 100)}% confidence`);
       setTimeout(() => setToast(null), 4000);
     } catch {
       setToast('❌ Analysis failed');
@@ -202,7 +202,7 @@ export default function TrustShieldPage() {
                     <span style={{ fontSize: '11px', fontWeight: 600, color: v.color, background: v.bg, padding: '2px 10px', borderRadius: '100px' }}>
                       {v.icon} {v.label}
                     </span>
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{Math.round(a.confidence_scor * 100)}%</span>
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{Math.round(a.confidence_score * 100)}%</span>
                     <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{formatSize(a.file_size)}</span>
                   </div>
                 </div>
@@ -228,7 +228,7 @@ export default function TrustShieldPage() {
                 </div>
                 <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
                   <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
-                    <ConfidenceGauge score={selected.confidence_scor} />
+                    <ConfidenceGauge score={selected.confidence_score} />
                   </div>
                   <div style={{ marginBottom: '24px' }}>
                     <h4 style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>

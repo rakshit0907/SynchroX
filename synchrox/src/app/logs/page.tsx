@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 
 interface LogEntry {
-  _id: string;
-  queryId: string;
+  id: string;
+  query_id: string;
   event: string;
   details: string;
   metadata: Record<string, unknown>;
@@ -12,12 +12,12 @@ interface LogEntry {
 }
 
 interface QueryEntry {
-  _id: string;
-  userQuery: string;
+  id: string;
+  user_query: string;
   status: string;
-  confidenceScore: number;
-  aiModel: string;
-  createdAt: string;
+  confidence_score: number;
+  ai_model: string;
+  created_at: string;
 }
 
 const EVENT_CONFIG: Record<string, { label: string; icon: string; color: string }> = {
@@ -43,30 +43,30 @@ const STATUS_MAP: Record<string, { label: string; class: string }> = {
 };
 
 const DEMO_QUERIES: QueryEntry[] = [
-  { _id: 'q1', userQuery: 'Analyze Q3 revenue forecast and identify growth opportunities', status: 'auto_approved', confidenceScore: 0.91, aiModel: 'synchrox-sim-v1', createdAt: new Date(Date.now() - 120000).toISOString() },
-  { _id: 'q2', userQuery: 'Draft GDPR compliance report for data protection audit', status: 'pending_review', confidenceScore: 0.62, aiModel: 'synchrox-sim-v1', createdAt: new Date(Date.now() - 300000).toISOString() },
-  { _id: 'q3', userQuery: 'Design microservice architecture for payment system', status: 'human_edited', confidenceScore: 0.54, aiModel: 'synchrox-sim-v1', createdAt: new Date(Date.now() - 600000).toISOString() },
-  { _id: 'q4', userQuery: 'Generate marketing copy for product launch campaign', status: 'auto_approved', confidenceScore: 0.88, aiModel: 'synchrox-sim-v1', createdAt: new Date(Date.now() - 900000).toISOString() },
-  { _id: 'q5', userQuery: 'Review and optimize database query performance metrics', status: 'human_approved', confidenceScore: 0.71, aiModel: 'synchrox-sim-v1', createdAt: new Date(Date.now() - 1500000).toISOString() },
-  { _id: 'q6', userQuery: 'Create API documentation for the orchestration endpoints', status: 'auto_approved', confidenceScore: 0.85, aiModel: 'synchrox-sim-v1', createdAt: new Date(Date.now() - 2000000).toISOString() },
-  { _id: 'q7', userQuery: 'Evaluate security vulnerabilities in authentication flow', status: 'rejected', confidenceScore: 0.32, aiModel: 'synchrox-sim-v1', createdAt: new Date(Date.now() - 3000000).toISOString() },
+  { id: 'q1', user_query: 'Analyze Q3 revenue forecast and identify growth opportunities', status: 'auto_approved', confidence_score: 0.91, ai_model: 'demo', created_at: new Date(Date.now() - 120000).toISOString() },
+  { id: 'q2', user_query: 'Draft GDPR compliance report for data protection audit', status: 'pending_review', confidence_score: 0.62, ai_model: 'demo', created_at: new Date(Date.now() - 300000).toISOString() },
+  { id: 'q3', user_query: 'Design microservice architecture for payment system', status: 'human_edited', confidence_score: 0.54, ai_model: 'demo', created_at: new Date(Date.now() - 600000).toISOString() },
+  { id: 'q4', user_query: 'Generate marketing copy for product launch campaign', status: 'auto_approved', confidence_score: 0.88, ai_model: 'demo', created_at: new Date(Date.now() - 900000).toISOString() },
+  { id: 'q5', user_query: 'Review and optimize database query performance metrics', status: 'human_approved', confidence_score: 0.71, ai_model: 'demo', created_at: new Date(Date.now() - 1500000).toISOString() },
+  { id: 'q6', user_query: 'Create API documentation for the orchestration endpoints', status: 'auto_approved', confidence_score: 0.85, ai_model: 'demo', created_at: new Date(Date.now() - 2000000).toISOString() },
+  { id: 'q7', user_query: 'Evaluate security vulnerabilities in authentication flow', status: 'rejected', confidence_score: 0.32, ai_model: 'demo', created_at: new Date(Date.now() - 3000000).toISOString() },
 ];
 
 const DEMO_LOGS: Record<string, LogEntry[]> = {
   q1: [
-    { _id: 'l1', queryId: 'q1', event: 'query_received', details: 'User submitted query: "Analyze Q3 revenue forecast..."', metadata: {}, timestamp: new Date(Date.now() - 125000).toISOString() },
-    { _id: 'l2', queryId: 'q1', event: 'ai_processing', details: 'AI agent is analyzing the query...', metadata: {}, timestamp: new Date(Date.now() - 124000).toISOString() },
-    { _id: 'l3', queryId: 'q1', event: 'ai_response', details: 'AI generated response with confidence: 0.91', metadata: { model: 'synchrox-sim-v1', tokensUsed: 287 }, timestamp: new Date(Date.now() - 123000).toISOString() },
-    { _id: 'l4', queryId: 'q1', event: 'confidence_check', details: 'Confidence 0.91 vs threshold 0.75', metadata: { meetsThreshold: true }, timestamp: new Date(Date.now() - 122000).toISOString() },
-    { _id: 'l5', queryId: 'q1', event: 'auto_approved', details: 'Response auto-approved based on confidence threshold', metadata: {}, timestamp: new Date(Date.now() - 121000).toISOString() },
-    { _id: 'l6', queryId: 'q1', event: 'response_delivered', details: 'Final response delivered to user', metadata: {}, timestamp: new Date(Date.now() - 120000).toISOString() },
+    { id: 'l1', query_id: 'q1', event: 'query_received', details: 'User submitted query: "Analyze Q3 revenue forecast..."', metadata: {}, timestamp: new Date(Date.now() - 125000).toISOString() },
+    { id: 'l2', query_id: 'q1', event: 'ai_processing', details: 'AI agent is analyzing the query...', metadata: {}, timestamp: new Date(Date.now() - 124000).toISOString() },
+    { id: 'l3', query_id: 'q1', event: 'ai_response', details: 'AI generated response with confidence: 0.91', metadata: { model: 'demo', tokensUsed: 287 }, timestamp: new Date(Date.now() - 123000).toISOString() },
+    { id: 'l4', query_id: 'q1', event: 'confidence_check', details: 'Confidence 0.91 vs threshold 0.75', metadata: { meetsThreshold: true }, timestamp: new Date(Date.now() - 122000).toISOString() },
+    { id: 'l5', query_id: 'q1', event: 'auto_approved', details: 'Response auto-approved based on confidence threshold', metadata: {}, timestamp: new Date(Date.now() - 121000).toISOString() },
+    { id: 'l6', query_id: 'q1', event: 'response_delivered', details: 'Final response delivered to user', metadata: {}, timestamp: new Date(Date.now() - 120000).toISOString() },
   ],
   q2: [
-    { _id: 'l7', queryId: 'q2', event: 'query_received', details: 'User submitted query: "Draft GDPR compliance report..."', metadata: {}, timestamp: new Date(Date.now() - 310000).toISOString() },
-    { _id: 'l8', queryId: 'q2', event: 'ai_processing', details: 'AI agent is analyzing the query...', metadata: {}, timestamp: new Date(Date.now() - 309000).toISOString() },
-    { _id: 'l9', queryId: 'q2', event: 'ai_response', details: 'AI generated response with confidence: 0.62', metadata: { model: 'synchrox-sim-v1', tokensUsed: 342 }, timestamp: new Date(Date.now() - 308000).toISOString() },
-    { _id: 'l10', queryId: 'q2', event: 'confidence_check', details: 'Confidence 0.62 vs threshold 0.75', metadata: { meetsThreshold: false }, timestamp: new Date(Date.now() - 307000).toISOString() },
-    { _id: 'l11', queryId: 'q2', event: 'routed_to_human', details: 'Low confidence (0.62 < 0.75). Escalated to human reviewer.', metadata: {}, timestamp: new Date(Date.now() - 306000).toISOString() },
+    { id: 'l7', query_id: 'q2', event: 'query_received', details: 'User submitted query: "Draft GDPR compliance report..."', metadata: {}, timestamp: new Date(Date.now() - 310000).toISOString() },
+    { id: 'l8', query_id: 'q2', event: 'ai_processing', details: 'AI agent is analyzing the query...', metadata: {}, timestamp: new Date(Date.now() - 309000).toISOString() },
+    { id: 'l9', query_id: 'q2', event: 'ai_response', details: 'AI generated response with confidence: 0.62', metadata: { model: 'demo', tokensUsed: 342 }, timestamp: new Date(Date.now() - 308000).toISOString() },
+    { id: 'l10', query_id: 'q2', event: 'confidence_check', details: 'Confidence 0.62 vs threshold 0.75', metadata: { meetsThreshold: false }, timestamp: new Date(Date.now() - 307000).toISOString() },
+    { id: 'l11', query_id: 'q2', event: 'routed_to_human', details: 'Low confidence (0.62 < 0.75). Escalated to human reviewer.', metadata: {}, timestamp: new Date(Date.now() - 306000).toISOString() },
   ],
 };
 
@@ -224,12 +224,12 @@ export default function LogsPage() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <div className="confidence-bar" style={{ width: '50px' }}>
                         <div
-                          className={`confidence-fill ${q.confidence_scor >= 0.75 ? 'confidence-high' : q.confidence_scor >= 0.5 ? 'confidence-medium' : 'confidence-low'}`}
-                          style={{ width: `${q.confidence_scor * 100}%` }}
+                          className={`confidence-fill ${q.confidence_score >= 0.75 ? 'confidence-high' : q.confidence_score >= 0.5 ? 'confidence-medium' : 'confidence-low'}`}
+                          style={{ width: `${q.confidence_score * 100}%` }}
                         />
                       </div>
                       <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                        {Math.round(q.confidence_scor * 100)}%
+                        {Math.round(q.confidence_score * 100)}%
                       </span>
                     </div>
                     <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginLeft: 'auto' }}>

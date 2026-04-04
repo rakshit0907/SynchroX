@@ -14,11 +14,11 @@ interface Stats {
   avgProcessingTime: number;
   hitlRate: number;
   recentQueries: Array<{
-    _id: string;
-    userQuery: string;
+    id: string;
+    user_query: string;
     status: string;
-    confidenceScore: number;
-    createdAt: string;
+    confidence_score: number;
+    created_at: string;
   }>;
 }
 
@@ -131,11 +131,11 @@ export default function DashboardPage() {
         avgProcessingTime: 842,
         hitlRate: 31.3,
         recentQueries: [
-          { _id: '1', userQuery: 'Analyze our Q3 revenue forecast and identify growth opportunities', status: 'auto_approved', confidenceScore: 0.91, createdAt: new Date().toISOString() },
-          { _id: '2', userQuery: 'Draft a compliance report for GDPR data protection audit', status: 'pending_review', confidenceScore: 0.62, createdAt: new Date(Date.now() - 300000).toISOString() },
-          { _id: '3', userQuery: 'Design a microservice architecture for the payment system', status: 'human_edited', confidenceScore: 0.54, createdAt: new Date(Date.now() - 600000).toISOString() },
-          { _id: '4', userQuery: 'Generate marketing copy for the product launch campaign', status: 'auto_approved', confidenceScore: 0.88, createdAt: new Date(Date.now() - 900000).toISOString() },
-          { _id: '5', userQuery: 'Review and optimize the database query performance', status: 'human_approved', confidenceScore: 0.71, createdAt: new Date(Date.now() - 1200000).toISOString() },
+          { id: '1', user_query: 'Analyze our Q3 revenue forecast and identify growth opportunities', status: 'auto_approved', confidence_score: 0.91, created_at: new Date().toISOString() },
+          { id: '2', user_query: 'Draft a compliance report for GDPR data protection audit', status: 'pending_review', confidence_score: 0.62, created_at: new Date(Date.now() - 300000).toISOString() },
+          { id: '3', user_query: 'Design a microservice architecture for the payment system', status: 'human_edited', confidence_score: 0.54, created_at: new Date(Date.now() - 600000).toISOString() },
+          { id: '4', user_query: 'Generate marketing copy for the product launch campaign', status: 'auto_approved', confidence_score: 0.88, created_at: new Date(Date.now() - 900000).toISOString() },
+          { id: '5', user_query: 'Review and optimize the database query performance', status: 'human_approved', confidence_score: 0.71, created_at: new Date(Date.now() - 1200000).toISOString() },
         ],
       });
     } finally {
@@ -160,7 +160,7 @@ export default function DashboardPage() {
       });
       const data = await res.json();
       const status = data.query?.status;
-      const conf = data.query?.confidence_scor;
+      const conf = data.query?.confidence_score;
       setToast(
         status === 'auto_approved'
           ? `✅ Auto-approved (confidence: ${Math.round(conf * 100)}%)`
@@ -295,7 +295,7 @@ export default function DashboardPage() {
                     <span className={`badge ${STATUS_MAP[q.status]?.class || ''}`}>
                       {STATUS_MAP[q.status]?.label || q.status}
                     </span>
-                    <ConfidenceBar score={q.confidence_scor} />
+                    <ConfidenceBar score={q.confidence_score} />
                     <span className="activity-time">{timeAgo(q.created_at)}</span>
                   </div>
                 </div>
