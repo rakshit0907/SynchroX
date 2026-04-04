@@ -10,7 +10,6 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
 
   return (
     <AuthProvider>
-      <div className="bg-orbs" />
       {isAuthPage ? (
         <>{children}</>
       ) : (
