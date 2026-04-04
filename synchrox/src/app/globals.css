@@ -134,13 +134,13 @@ textarea.input-field { resize: vertical; min-height: 100px; }
 .legend-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-secondary); }
 .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
-.builder-layout { display: grid; grid-template-columns: 220px 1fr 280px; gap: 20px; height: calc(100vh - 140px); }
+.builder-layout { display: grid; grid-template-columns: 220px 1fr 280px; gap: 20px; height: calc(100vh - 180px); }
 .builder-palette { padding: 20px; overflow-y: auto; }
 .palette-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 10px; cursor: grab; font-size: 13px; font-weight: 500; color: var(--text-secondary); border: 1px solid transparent; transition: all 0.2s ease; margin-bottom: 8px; }
 .palette-item:hover { background: rgba(255,255,255,0.05); border-color: var(--border-glass); color: var(--text-primary); }
 .palette-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-.builder-canvas { border-radius: 16px; background: rgba(10,14,26,0.5); border: 1px solid var(--border-glass); position: relative; overflow: hidden; }
-.canvas-grid { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 24px 24px; }
+.builder-canvas { border-radius: 16px; background: rgba(10,14,26,0.5); border: 1px solid var(--border-glass); position: relative; overflow: hidden; flex: 1; min-height: 0; }
+.canvas-grid { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 24px 24px; pointer-events: none; }
 .builder-properties { padding: 20px; overflow-y: auto; }
 .workflow-node { position: absolute; padding: 14px 20px; border-radius: 12px; cursor: move; font-size: 13px; font-weight: 600; min-width: 140px; text-align: center; transition: box-shadow 0.2s ease; z-index: 10; border: 1px solid; user-select: none; }
 .workflow-node.start { background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.3); color: #34d399; }

@@ -21,25 +21,25 @@ interface QueryEntry {
 }
 
 const EVENT_CONFIG: Record<string, { label: string; icon: string; color: string }> = {
-  query_received: { label: 'Query Received', icon: '📥', color: 'var(--accent-blue)' },
-  ai_processing: { label: 'AI Processing', icon: '⚙️', color: 'var(--accent-cyan)' },
-  ai_response: { label: 'AI Response', icon: '🤖', color: 'var(--accent-blue)' },
-  confidence_check: { label: 'Confidence Check', icon: '📊', color: 'var(--accent-purple)' },
-  auto_approved: { label: 'Auto Approved', icon: '✅', color: 'var(--accent-green)' },
-  routed_to_human: { label: 'Routed to Human', icon: '👤', color: 'var(--accent-amber)' },
-  human_approved: { label: 'Human Approved', icon: '✅', color: 'var(--accent-green)' },
-  human_edited: { label: 'Human Edited', icon: '📝', color: 'var(--accent-purple)' },
-  human_rejected: { label: 'Rejected', icon: '❌', color: 'var(--accent-red)' },
-  response_delivered: { label: 'Delivered', icon: '📤', color: 'var(--accent-green)' },
+  query_received:    { label: 'Query Received',    icon: '📥', color: 'var(--accent-blue)' },
+  ai_processing:     { label: 'AI Processing',     icon: '🤖', color: 'var(--accent-cyan)' },
+  ai_response:       { label: 'AI Response',       icon: '💬', color: 'var(--accent-blue)' },
+  confidence_check:  { label: 'Confidence Check',  icon: '🔀', color: 'var(--accent-purple)' },
+  auto_approved:     { label: 'Auto Approved',     icon: '✅', color: 'var(--accent-green)' },
+  routed_to_human:   { label: 'Routed to Human',   icon: '👤', color: 'var(--accent-amber)' },
+  human_approved:    { label: 'Human Approved',    icon: '✅', color: 'var(--accent-green)' },
+  human_edited:      { label: 'Human Edited',      icon: '📝', color: 'var(--accent-purple)' },
+  human_rejected:    { label: 'Human Rejected',    icon: '❌', color: 'var(--accent-red)' },
+  response_delivered:{ label: 'Response Delivered',icon: '📤', color: 'var(--accent-green)' },
 };
 
 const STATUS_MAP: Record<string, { label: string; class: string }> = {
-  processing: { label: 'Processing', class: 'badge-processing' },
-  auto_approved: { label: 'Auto Approved', class: 'badge-auto' },
-  pending_review: { label: 'Pending Review', class: 'badge-pending' },
-  human_approved: { label: 'Approved', class: 'badge-approved' },
-  human_edited: { label: 'Edited', class: 'badge-edited' },
-  rejected: { label: 'Rejected', class: 'badge-rejected' },
+  auto_approved:   { label: 'Auto Approved',  class: 'badge-auto' },
+  pending_review:  { label: 'Pending Review', class: 'badge-pending' },
+  human_approved:  { label: 'Approved',       class: 'badge-approved' },
+  human_edited:    { label: 'Edited',         class: 'badge-edited' },
+  rejected:        { label: 'Rejected',       class: 'badge-rejected' },
+  processing:      { label: 'Processing',     class: 'badge-processing' },
 };
 
 const DEMO_QUERIES: QueryEntry[] = [
@@ -48,25 +48,23 @@ const DEMO_QUERIES: QueryEntry[] = [
   { id: 'q3', user_query: 'Design microservice architecture for payment system', status: 'human_edited', confidence_score: 0.54, ai_model: 'demo', created_at: new Date(Date.now() - 600000).toISOString() },
   { id: 'q4', user_query: 'Generate marketing copy for product launch campaign', status: 'auto_approved', confidence_score: 0.88, ai_model: 'demo', created_at: new Date(Date.now() - 900000).toISOString() },
   { id: 'q5', user_query: 'Review and optimize database query performance metrics', status: 'human_approved', confidence_score: 0.71, ai_model: 'demo', created_at: new Date(Date.now() - 1500000).toISOString() },
-  { id: 'q6', user_query: 'Create API documentation for the orchestration endpoints', status: 'auto_approved', confidence_score: 0.85, ai_model: 'demo', created_at: new Date(Date.now() - 2000000).toISOString() },
-  { id: 'q7', user_query: 'Evaluate security vulnerabilities in authentication flow', status: 'rejected', confidence_score: 0.32, ai_model: 'demo', created_at: new Date(Date.now() - 3000000).toISOString() },
 ];
 
 const DEMO_LOGS: Record<string, LogEntry[]> = {
   q1: [
-    { id: 'l1', query_id: 'q1', event: 'query_received', details: 'User submitted query: "Analyze Q3 revenue forecast..."', metadata: {}, timestamp: new Date(Date.now() - 125000).toISOString() },
-    { id: 'l2', query_id: 'q1', event: 'ai_processing', details: 'AI agent is analyzing the query...', metadata: {}, timestamp: new Date(Date.now() - 124000).toISOString() },
-    { id: 'l3', query_id: 'q1', event: 'ai_response', details: 'AI generated response with confidence: 0.91', metadata: { model: 'demo', tokensUsed: 287 }, timestamp: new Date(Date.now() - 123000).toISOString() },
-    { id: 'l4', query_id: 'q1', event: 'confidence_check', details: 'Confidence 0.91 vs threshold 0.75', metadata: { meetsThreshold: true }, timestamp: new Date(Date.now() - 122000).toISOString() },
-    { id: 'l5', query_id: 'q1', event: 'auto_approved', details: 'Response auto-approved based on confidence threshold', metadata: {}, timestamp: new Date(Date.now() - 121000).toISOString() },
+    { id: 'l1', query_id: 'q1', event: 'query_received', details: 'Query received: "Analyze Q3 revenue forecast..."', metadata: {}, timestamp: new Date(Date.now() - 125000).toISOString() },
+    { id: 'l2', query_id: 'q1', event: 'ai_processing', details: 'AI model processing query...', metadata: {}, timestamp: new Date(Date.now() - 124000).toISOString() },
+    { id: 'l3', query_id: 'q1', event: 'ai_response', details: 'Response generated. Confidence: 0.91', metadata: { tokensUsed: 287 }, timestamp: new Date(Date.now() - 123000).toISOString() },
+    { id: 'l4', query_id: 'q1', event: 'confidence_check', details: 'Confidence 0.91 ≥ threshold 0.75', metadata: { meetsThreshold: true }, timestamp: new Date(Date.now() - 122000).toISOString() },
+    { id: 'l5', query_id: 'q1', event: 'auto_approved', details: 'Auto-approved — confidence above threshold', metadata: {}, timestamp: new Date(Date.now() - 121000).toISOString() },
     { id: 'l6', query_id: 'q1', event: 'response_delivered', details: 'Final response delivered to user', metadata: {}, timestamp: new Date(Date.now() - 120000).toISOString() },
   ],
   q2: [
-    { id: 'l7', query_id: 'q2', event: 'query_received', details: 'User submitted query: "Draft GDPR compliance report..."', metadata: {}, timestamp: new Date(Date.now() - 310000).toISOString() },
-    { id: 'l8', query_id: 'q2', event: 'ai_processing', details: 'AI agent is analyzing the query...', metadata: {}, timestamp: new Date(Date.now() - 309000).toISOString() },
-    { id: 'l9', query_id: 'q2', event: 'ai_response', details: 'AI generated response with confidence: 0.62', metadata: { model: 'demo', tokensUsed: 342 }, timestamp: new Date(Date.now() - 308000).toISOString() },
-    { id: 'l10', query_id: 'q2', event: 'confidence_check', details: 'Confidence 0.62 vs threshold 0.75', metadata: { meetsThreshold: false }, timestamp: new Date(Date.now() - 307000).toISOString() },
-    { id: 'l11', query_id: 'q2', event: 'routed_to_human', details: 'Low confidence (0.62 < 0.75). Escalated to human reviewer.', metadata: {}, timestamp: new Date(Date.now() - 306000).toISOString() },
+    { id: 'l7', query_id: 'q2', event: 'query_received', details: 'Query received: "Draft GDPR compliance..."', metadata: {}, timestamp: new Date(Date.now() - 310000).toISOString() },
+    { id: 'l8', query_id: 'q2', event: 'ai_processing', details: 'AI model processing query...', metadata: {}, timestamp: new Date(Date.now() - 309000).toISOString() },
+    { id: 'l9', query_id: 'q2', event: 'ai_response', details: 'Response generated. Confidence: 0.62', metadata: { tokensUsed: 342 }, timestamp: new Date(Date.now() - 308000).toISOString() },
+    { id: 'l10', query_id: 'q2', event: 'confidence_check', details: 'Confidence 0.62 < threshold 0.75', metadata: { meetsThreshold: false }, timestamp: new Date(Date.now() - 307000).toISOString() },
+    { id: 'l11', query_id: 'q2', event: 'routed_to_human', details: 'Low confidence — escalated to HITL review', metadata: {}, timestamp: new Date(Date.now() - 306000).toISOString() },
   ],
 };
 
@@ -74,10 +72,12 @@ export default function LogsPage() {
   const [queries, setQueries] = useState<QueryEntry[]>([]);
   const [selectedQuery, setSelectedQuery] = useState<QueryEntry | null>(null);
   const [logs, setLogs] = useState<LogEntry[]>([]);
-  const [filter, setFilter] = useState('all');
-  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
-  const [logsLoading, setLogsLoading] = useState(false);
+  const [logLoading, setLogLoading] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+  const [filter, setFilter] = useState<string>('all');
+  const [usingDemo, setUsingDemo] = useState(false);
 
   const fetchQueries = useCallback(async () => {
     try {
@@ -85,227 +85,221 @@ export default function LogsPage() {
       const data = await res.json();
       if (data.queries && data.queries.length > 0) {
         setQueries(data.queries);
+        setUsingDemo(false);
       } else {
         setQueries(DEMO_QUERIES);
+        setUsingDemo(true);
       }
     } catch {
       setQueries(DEMO_QUERIES);
-    } finally {
-      setLoading(false);
-    }
+      setUsingDemo(true);
+    } finally { setLoading(false); }
   }, []);
 
   useEffect(() => {
     fetchQueries();
+    // Poll every 5 seconds for realtime-like updates
+    const t = setInterval(fetchQueries, 5000);
+    return () => clearInterval(t);
   }, [fetchQueries]);
 
-  const fetchLogs = async (queryId: string) => {
-    setLogsLoading(true);
+  const fetchLogs = useCallback(async (q: QueryEntry) => {
+    setSelectedQuery(q);
+    setLogLoading(true);
+    if (usingDemo || q.id.startsWith('demo') || q.id.startsWith('q')) {
+      await new Promise(r => setTimeout(r, 300));
+      setLogs(DEMO_LOGS[q.id] || []);
+    } else {
+      try {
+        const res = await fetch(`/api/logs?queryId=${q.id}`);
+        const data = await res.json();
+        setLogs(data.logs || []);
+      } catch { setLogs([]); }
+    }
+    setLogLoading(false);
+  }, [usingDemo]);
+
+  const deleteQuery = async (q: QueryEntry, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (q.id.startsWith('demo') || q.id.startsWith('q')) {
+      setQueries(prev => prev.filter(x => x.id !== q.id));
+      if (selectedQuery?.id === q.id) { setSelectedQuery(null); setLogs([]); }
+      setToast('🗑️ Query removed from view');
+      setTimeout(() => setToast(null), 2000);
+      return;
+    }
+    setDeletingId(q.id);
     try {
-      const res = await fetch(`/api/logs?queryId=${queryId}`);
-      const data = await res.json();
-      if (data.logs && data.logs.length > 0) {
-        setLogs(data.logs.reverse());
-      } else {
-        setLogs(DEMO_LOGS[queryId] || []);
-      }
+      await fetch(`/api/queries/${q.id}`, { method: 'DELETE' });
+      setQueries(prev => prev.filter(x => x.id !== q.id));
+      if (selectedQuery?.id === q.id) { setSelectedQuery(null); setLogs([]); }
+      setToast('🗑️ Query and logs deleted');
     } catch {
-      setLogs(DEMO_LOGS[queryId] || []);
+      setToast('❌ Delete failed');
     } finally {
-      setLogsLoading(false);
+      setDeletingId(null);
+      setTimeout(() => setToast(null), 2000);
     }
   };
 
-  const selectQuery = (q: QueryEntry) => {
-    setSelectedQuery(q);
-    fetchLogs(q.id);
-  };
-
-  const filteredQueries = queries.filter((q) => {
-    if (filter !== 'all' && q.status !== filter) return false;
-    if (search && !q.user_query.toLowerCase().includes(search.toLowerCase())) return false;
-    return true;
-  });
-
-  const timeAgo = (dateStr: string) => {
-    const diff = Date.now() - new Date(dateStr).getTime();
-    const mins = Math.floor(diff / 60000);
+  const timeAgo = (d: string) => {
+    const mins = Math.floor((Date.now() - new Date(d).getTime()) / 60000);
     if (mins < 1) return 'Just now';
     if (mins < 60) return `${mins}m ago`;
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
-    return `${Math.floor(hrs / 24)}d ago`;
+    if (mins < 1440) return `${Math.floor(mins / 60)}h ago`;
+    return `${Math.floor(mins / 1440)}d ago`;
   };
 
-  const formatTime = (dateStr: string) => {
-    return new Date(dateStr).toLocaleTimeString('en-US', {
-      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
-    });
-  };
+  const filteredQueries = filter === 'all' ? queries : queries.filter(q => q.status === filter);
 
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
-        <div className="spinner" style={{ width: '40px', height: '40px', borderWidth: '3px' }} />
-      </div>
-    );
-  }
+  if (loading) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
+      <div className="spinner" style={{ width: '40px', height: '40px', borderWidth: '3px' }} />
+    </div>
+  );
 
   return (
     <>
-      <div className="page-header">
-        <h1 className="page-title">Decision Logs</h1>
-        <p className="page-subtitle">Full transparency into AI decisions, routing logic, and human interventions</p>
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <h1 className="page-title">System Logs</h1>
+          <p className="page-subtitle">
+            Full audit trail for every query — persists permanently until deleted
+            {usingDemo && <span style={{ marginLeft: '8px', fontSize: '11px', color: 'var(--accent-amber)', background: 'rgba(245,158,11,0.1)', padding: '2px 8px', borderRadius: '100px', border: '1px solid rgba(245,158,11,0.2)' }}>Demo Data</span>}
+          </p>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-green)', animation: 'pulse-glow 2s infinite' }} />
+          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Live • refreshes every 5s</span>
+        </div>
       </div>
 
-      {/* Filters */}
-      <div className="glass-card" style={{ padding: '16px 24px', marginBottom: '20px', display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-        <input
-          className="input-field"
-          placeholder="🔍 Search queries..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{ width: '280px' }}
-        />
-        <div style={{ display: 'flex', gap: '6px' }}>
-          {['all', 'auto_approved', 'pending_review', 'human_approved', 'human_edited', 'rejected'].map((f) => (
-            <button
-              key={f}
-              className={`btn btn-sm ${filter === f ? 'btn-primary' : 'btn-secondary'}`}
-              onClick={() => setFilter(f)}
-              style={{ fontSize: '11px', padding: '5px 12px' }}
-            >
-              {f === 'all' ? 'All' : STATUS_MAP[f]?.label || f}
-            </button>
-          ))}
-        </div>
-        <span style={{ marginLeft: 'auto', fontSize: '12px', color: 'var(--text-muted)' }}>
-          {filteredQueries.length} results
-        </span>
+      {/* Filter Tabs */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        {['all', 'auto_approved', 'pending_review', 'human_approved', 'human_edited', 'rejected'].map((f) => (
+          <button key={f} onClick={() => setFilter(f)} style={{
+            padding: '6px 14px', borderRadius: '100px', border: `1px solid ${filter === f ? 'rgba(59,130,246,0.4)' : 'var(--border-glass)'}`,
+            background: filter === f ? 'rgba(59,130,246,0.1)' : 'transparent', color: filter === f ? 'var(--accent-blue)' : 'var(--text-muted)',
+            fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter, sans-serif', transition: 'all 0.2s ease',
+          }}>
+            {f === 'all' ? `All (${queries.length})` : STATUS_MAP[f]?.label || f}
+          </button>
+        ))}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', height: 'calc(100vh - 240px)' }}>
         {/* Query List */}
         <div className="glass-card" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-glass)' }}>
-            <h3 style={{ fontSize: '14px', fontWeight: 700 }}>Conversation History</h3>
-          </div>
           <div style={{ flex: 1, overflowY: 'auto' }}>
             {filteredQueries.length === 0 ? (
               <div className="empty-state">
                 <div className="empty-state-icon">📋</div>
-                <div className="empty-state-text">No matching queries</div>
-                <div className="empty-state-sub">Try adjusting your search or filters</div>
+                <div className="empty-state-text">No queries found</div>
               </div>
-            ) : (
-              filteredQueries.map((q) => (
-                <div
-                  key={q.id}
-                  onClick={() => selectQuery(q)}
-                  style={{
-                    padding: '16px 24px',
-                    borderBottom: '1px solid rgba(255,255,255,0.03)',
-                    cursor: 'pointer',
-                    background: selectedQuery?.id === q.id ? 'rgba(59, 130, 246, 0.08)' : 'transparent',
-                    transition: 'all 0.15s ease',
-                  }}
-                >
-                  <div style={{
-                    fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500,
-                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                    marginBottom: '8px',
-                  }}>
+            ) : filteredQueries.map((q) => (
+              <div key={q.id} onClick={() => fetchLogs(q)} style={{
+                padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.03)', cursor: 'pointer',
+                background: selectedQuery?.id === q.id ? 'rgba(59,130,246,0.06)' : 'transparent',
+                borderLeft: selectedQuery?.id === q.id ? '3px solid var(--accent-blue)' : '3px solid transparent',
+                transition: 'all 0.2s ease', position: 'relative',
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                  <div style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, marginBottom: '8px' }}>
                     {q.user_query}
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span className={`badge ${STATUS_MAP[q.status]?.class || 'badge-draft'}`}>
-                      {STATUS_MAP[q.status]?.label || q.status}
-                    </span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <div className="confidence-bar" style={{ width: '50px' }}>
-                        <div
-                          className={`confidence-fill ${q.confidence_score >= 0.75 ? 'confidence-high' : q.confidence_score >= 0.5 ? 'confidence-medium' : 'confidence-low'}`}
-                          style={{ width: `${q.confidence_score * 100}%` }}
-                        />
-                      </div>
-                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                        {Math.round(q.confidence_score * 100)}%
-                      </span>
-                    </div>
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginLeft: 'auto' }}>
-                      {timeAgo(q.created_at)}
-                    </span>
-                  </div>
+                  <button
+                    onClick={(e) => deleteQuery(q, e)}
+                    disabled={deletingId === q.id}
+                    style={{
+                      width: '24px', height: '24px', borderRadius: '6px', border: '1px solid rgba(239,68,68,0.2)', background: 'rgba(239,68,68,0.08)',
+                      color: 'var(--accent-red)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '13px', flexShrink: 0, transition: 'all 0.2s ease',
+                    }}
+                    title="Delete query and all logs"
+                  >
+                    {deletingId === q.id ? '...' : '🗑'}
+                  </button>
                 </div>
-              ))
-            )}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <span className={`badge ${STATUS_MAP[q.status]?.class || 'badge-processing'}`} style={{ fontSize: '10px', padding: '2px 8px' }}>
+                    {STATUS_MAP[q.status]?.label || q.status}
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <div style={{ width: '40px', height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div style={{
+                        height: '100%', borderRadius: '4px',
+                        width: `${q.confidence_score * 100}%`,
+                        background: q.confidence_score >= 0.75 ? 'var(--accent-green)' : q.confidence_score >= 0.5 ? 'var(--accent-amber)' : 'var(--accent-red)',
+                      }} />
+                    </div>
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{Math.round(q.confidence_score * 100)}%</span>
+                  </div>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginLeft: 'auto' }}>{timeAgo(q.created_at)}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Decision Timeline */}
+        {/* Log Timeline */}
         <div className="glass-card" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-glass)' }}>
-            <h3 style={{ fontSize: '14px', fontWeight: 700 }}>Decision Timeline</h3>
-          </div>
-          <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
-            {!selectedQuery ? (
-              <div className="empty-state" style={{ height: '100%' }}>
-                <div className="empty-state-icon">🔍</div>
-                <div className="empty-state-text">Select a query to view logs</div>
-                <div className="empty-state-sub">Click on a conversation to see the full decision trail</div>
+          {selectedQuery ? (
+            <>
+              <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border-glass)' }}>
+                <div style={{ fontSize: '14px', fontWeight: 700, marginBottom: '4px' }}>Event Timeline</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {selectedQuery.user_query}
+                </div>
               </div>
-            ) : logsLoading ? (
-              <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
-                <div className="spinner" />
-              </div>
-            ) : (
-              <div className="log-timeline">
-                {logs.map((log) => {
-                  const config = EVENT_CONFIG[log.event] || { label: log.event, icon: '📌', color: 'var(--text-muted)' };
-                  return (
-                    <div key={log.id} className={`log-entry ${log.event}`}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                        <div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                            <span style={{ fontSize: '14px' }}>{config.icon}</span>
-                            <span style={{ fontSize: '13px', fontWeight: 600, color: config.color }}>
-                              {config.label}
+              <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
+                {logLoading ? (
+                  <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '40px' }}>
+                    <div className="spinner" style={{ width: '32px', height: '32px', borderWidth: '2px' }} />
+                  </div>
+                ) : logs.length === 0 ? (
+                  <div className="empty-state">
+                    <div className="empty-state-icon">📋</div>
+                    <div className="empty-state-text">No logs available</div>
+                  </div>
+                ) : (
+                  <div className="log-timeline">
+                    {logs.map((log) => {
+                      const conf = EVENT_CONFIG[log.event];
+                      return (
+                        <div key={log.id} className={`log-entry ${log.event}`}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                            <span style={{ fontSize: '16px' }}>{conf?.icon || '📌'}</span>
+                            <span style={{ fontSize: '13px', fontWeight: 600, color: conf?.color || 'var(--text-primary)' }}>
+                              {conf?.label || log.event}
                             </span>
-                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                              {formatTime(log.timestamp)}
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginLeft: 'auto' }}>
+                              {new Date(log.timestamp).toLocaleTimeString()}
                             </span>
                           </div>
-                          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.6', marginLeft: '26px' }}>
-                            {log.details}
-                          </p>
-                          {log.metadata && Object.keys(log.metadata).length > 0 && (
-                            <div style={{
-                              marginTop: '8px', marginLeft: '26px', padding: '8px 12px',
-                              background: 'rgba(255,255,255,0.02)', borderRadius: '8px',
-                              fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'monospace',
-                            }}>
-                              {Object.entries(log.metadata).map(([k, v]) => (
-                                <div key={k}>
-                                  <span style={{ color: 'var(--accent-cyan)' }}>{k}</span>: {JSON.stringify(v)}
-                                </div>
-                              ))}
+                          <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.5', paddingLeft: '26px' }}>{log.details}</p>
+                          {Object.keys(log.metadata || {}).length > 0 && (
+                            <div style={{ marginLeft: '26px', marginTop: '6px', padding: '8px 10px', background: 'rgba(255,255,255,0.02)', borderRadius: '6px', fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
+                              {JSON.stringify(log.metadata)}
                             </div>
                           )}
                         </div>
-                      </div>
-                    </div>
-                  );
-                })}
-                {logs.length === 0 && (
-                  <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)', fontSize: '13px' }}>
-                    No detailed logs available for this query (demo mode)
+                      );
+                    })}
                   </div>
                 )}
               </div>
-            )}
-          </div>
+            </>
+          ) : (
+            <div className="empty-state" style={{ height: '100%' }}>
+              <div className="empty-state-icon">📊</div>
+              <div className="empty-state-text">Select a query to view its event log</div>
+              <div className="empty-state-sub">Click any row on the left</div>
+            </div>
+          )}
         </div>
       </div>
+
+      {toast && <div className="toast">{toast}</div>}
     </>
   );
 }
