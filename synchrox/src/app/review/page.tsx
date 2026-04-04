@@ -150,6 +150,8 @@ export default function ReviewPage() {
   const [toast, setToast] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [activePanel, setActivePanel] = useState<'edit' | 'explain' | 'context'>('edit');
+  const [slaStats, setSlaStats] = useState<{ total_pending: number; within_sla: number; warning: number; breached: number; critical: number; avg_wait_mins: number } | null>(null);
+  const [tick, setTick] = useState(0); // forces re-render every minute for live timers
 
   const fetchPending = useCallback(async () => {
     try {
@@ -164,10 +166,29 @@ export default function ReviewPage() {
 
   useEffect(() => {
     fetchPending();
-    // Poll every 5 seconds for real-time feel
     const t = setInterval(fetchPending, 5000);
     return () => clearInterval(t);
   }, [fetchPending]);
+
+  // SLA checker — runs every 5 mins
+  useEffect(() => {
+    const checkSLA = async () => {
+      try {
+        const res = await fetch('/api/sla');
+        const data = await res.json();
+        if (data.stats) setSlaStats(data.stats);
+      } catch { /* ignore */ }
+    };
+    checkSLA();
+    const slaInterval = setInterval(checkSLA, 5 * 60 * 1000);
+    return () => clearInterval(slaInterval);
+  }, []);
+
+  // Live SLA timer — ticks every 30s to update displayed wait times
+  useEffect(() => {
+    const t = setInterval(() => setTick(n => n + 1), 30000);
+    return () => clearInterval(t);
+  }, []);
 
   const selectQuery = (q: ReviewQuery) => {
     setSelected(q);
@@ -207,7 +228,15 @@ export default function ReviewPage() {
     const mins = Math.floor((Date.now() - new Date(d).getTime()) / 60000);
     if (mins < 1) return 'Just now';
     if (mins < 60) return `${mins}m ago`;
-    return `${Math.floor(mins / 60)}h ago`;
+    return `${Math.floor(mins / 60)}h ${mins % 60}m ago`;
+  };
+  const getSLAStatus = (createdAt: string) => {
+    void tick; // depend on tick so timers update every 30s
+    const mins = Math.floor((Date.now() - new Date(createdAt).getTime()) / 60000);
+    if (mins < 20) return { label: `⏱ ${mins}m`, color: 'var(--accent-green)',  bg: 'rgba(16,185,129,0.1)',  urgent: false };
+    if (mins < 30) return { label: `⚠️ ${mins}m`, color: 'var(--accent-amber)', bg: 'rgba(245,158,11,0.1)', urgent: false };
+    if (mins < 60) return { label: `🚨 ${mins}m`, color: 'var(--accent-red)',   bg: 'rgba(239,68,68,0.1)',  urgent: true };
+    return { label: `🔴 ${Math.floor(mins/60)}h ${mins%60}m`, color: '#ff4444', bg: 'rgba(239,68,68,0.15)', urgent: true };
   };
 
   if (loading) return (
@@ -240,6 +269,15 @@ export default function ReviewPage() {
               <span className="badge badge-pending">{queries.length} pending</span>
             </div>
           </div>
+          {/* SLA Stats Bar */}
+          {slaStats && slaStats.total_pending > 0 && (
+            <div style={{ padding: '10px 24px', borderBottom: '1px solid var(--border-glass)', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              {slaStats.within_sla > 0 && <span style={{ fontSize: '11px', color: 'var(--accent-green)' }}>✅ {slaStats.within_sla} on track</span>}
+              {slaStats.warning > 0 && <span style={{ fontSize: '11px', color: 'var(--accent-amber)' }}>⚠️ {slaStats.warning} warning</span>}
+              {slaStats.breached > 0 && <span style={{ fontSize: '11px', color: 'var(--accent-red)' }}>🚨 {slaStats.breached} breached</span>}
+              {slaStats.avg_wait_mins > 0 && <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginLeft: 'auto' }}>avg {slaStats.avg_wait_mins}m wait</span>}
+            </div>
+          )}
           <div style={{ flex: 1, overflowY: 'auto' }}>
             {queries.length === 0 ? (
               <div className="empty-state">
@@ -257,12 +295,16 @@ export default function ReviewPage() {
                 <div style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '8px' }}>
                   {q.user_query}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: getConfColor(q.confidence_score) }} />
                     <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{Math.round(q.confidence_score * 100)}%</span>
                   </div>
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{timeAgo(q.created_at)}</span>
+                  {(() => { const sla = getSLAStatus(q.created_at); return (
+                    <span style={{ fontSize: '11px', fontWeight: 600, color: sla.color, background: sla.bg, padding: '2px 8px', borderRadius: '100px', animation: sla.urgent ? 'pulse-glow 1.5s infinite' : 'none' }}>
+                      {sla.label}
+                    </span>
+                  ); })()}
                 </div>
               </div>
             ))}
