@@ -36,7 +36,7 @@ function buildSummary(verdict: string, conf: number): string {
 
 export async function analyzeMedia(
   fileName: string, fileType: string, fileSize: number,
-  mediaType: 'image' | 'video', fileBuffer?: Buffer,
+  mediaType: 'image' | 'video', fileBuffer?: ArrayBuffer,
 ): Promise<AnalysisResult> {
   const startTime = Date.now();
 
