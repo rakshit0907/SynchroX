@@ -253,6 +253,8 @@ export default function ReviewPage() {
     background: activePanel === tab ? 'rgba(59,130,246,0.15)' : 'transparent',
     color: activePanel === tab ? 'var(--accent-blue)' : 'var(--text-muted)',
     fontFamily: 'Inter, sans-serif', transition: 'all 0.2s ease',
+  });
+
   return (
     <>
       <div className="page-header">

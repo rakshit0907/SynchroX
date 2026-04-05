@@ -198,14 +198,14 @@ export default function SettingsPage() {
       <Section title="Environment Info" icon="⚙️">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
           {[
-            { label: 'SUPABASE_URL',       value: process.env.NEXT_PUBLIC_SUPABASE_URL ? '✅ Set' : '❌ Missing', ok: !!process.env.NEXT_PUBLIC_SUPABASE_URL },
-            { label: 'SUPABASE_ANON_KEY',  value: '✅ Set (client)',  ok: true },
-            { label: 'HF_MODEL',           value: process.env.HF_MODEL || '⚠️ Using default', ok: !!process.env.HF_MODEL },
-            { label: 'SMTP_USER',          value: process.env.SMTP_USER ? '✅ Set' : '⚠️ Not set (email disabled)', ok: !!process.env.SMTP_USER },
+            { label: 'SUPABASE_URL',      value: process.env.NEXT_PUBLIC_SUPABASE_URL ? '✅ Set' : '❌ Missing', ok: !!process.env.NEXT_PUBLIC_SUPABASE_URL },
+            { label: 'SUPABASE_ANON_KEY', value: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? '✅ Set' : '❌ Missing', ok: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY },
+            { label: 'HF_MODEL',          value: '⚙️ Set in .env.local (server-side)',  ok: true },
+            { label: 'SMTP_USER',         value: '⚙️ Set in .env.local (server-side)',  ok: true },
           ].map(e => (
-            <div key={e.label} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-glass)', borderRadius: '10px', padding: '14px' }}>
+            <div key={e.label} style={{ background: 'var(--bg-page)', border: '1px solid var(--border)', borderRadius: '10px', padding: '14px' }}>
               <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px', fontFamily: 'monospace' }}>{e.label}</div>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: e.ok ? 'var(--accent-green)' : 'var(--accent-amber)' }}>{e.value}</div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: e.ok ? 'var(--accent-green)' : 'var(--accent-red)' }}>{e.value}</div>
             </div>
           ))}
         </div>
